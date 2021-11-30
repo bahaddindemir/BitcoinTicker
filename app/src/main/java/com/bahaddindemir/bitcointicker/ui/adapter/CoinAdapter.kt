@@ -2,7 +2,6 @@ package com.bahaddindemir.bitcointicker.ui.adapter
 
 import android.annotation.SuppressLint
 import android.view.View
-import androidx.core.content.ContextCompat
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
@@ -37,24 +36,4 @@ class CoinAdapter(private val delegate: CoinViewHolder.Delegate) : BaseAdapter()
 
     override fun viewHolder(layout: Int, view: View): BaseViewHolder =
         CoinViewHolder(view, delegate)
-
-    override fun onBindViewHolder(viewHolder: BaseViewHolder, position: Int) {
-        super.onBindViewHolder(viewHolder, position)
-        val colorPos = position % 2
-        if (colorPos == 0) {
-            //viewHolder.itemView.tableCoins.setBackgroundColor(
-            //    ContextCompat.getColor(
-            //        viewHolder.itemView.context,
-            //        R.color.splash
-            //    )
-            //)
-        } else {
-            //viewHolder.itemView.tableCoins.setBackgroundColor(
-            //    ContextCompat.getColor(
-            //        viewHolder.itemView.context,
-            //        R.color.splash
-            //    )
-            //)
-        }
-    }
 }

@@ -7,8 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class IntroViewModel @Inject constructor(private val generalUseCases: GeneralUseCases) : BaseViewModel()
-{
+class IntroViewModel @Inject constructor(private val generalUseCases: GeneralUseCases) :
+    BaseViewModel() {
+
     val openLogIn = SingleLiveEvent<Void>()
 
     fun onLogInClicked() {

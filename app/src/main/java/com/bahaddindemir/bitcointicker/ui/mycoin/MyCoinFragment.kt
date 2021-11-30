@@ -62,8 +62,7 @@ class MyCoinFragment : BaseFragment<FragmentMyCoinBinding>(), MyCoinViewHolder.D
     }
 
     private fun getMyCoinFavoriteList(firebaseUser: FirebaseUser) = Completable.create { emitter ->
-        val documentRefFavorite =
-            firebaseStore.collection(myCoinCollectionName).document(firebaseUser.uid)
+        val documentRefFavorite = firebaseStore.collection(myCoinCollectionName).document(firebaseUser.uid)
         val collectionMyFavorite = documentRefFavorite.collection(myFavoriteList)
         if (!emitter.isDisposed) {
             val noteListener =
@@ -82,18 +81,12 @@ class MyCoinFragment : BaseFragment<FragmentMyCoinBinding>(), MyCoinViewHolder.D
                                 val id: String = (dataHashMap?.get(coinId) ?: "id") as String
                                 val symbol = dataHashMap?.get(coinSymbol) as String?
                                 val name = dataHashMap?.get(coinName) as String?
-                                val hashingAlgorithm =
-                                    dataHashMap?.get("hashingAlgorithm") as String?
+                                val hashingAlgorithm = dataHashMap?.get("hashingAlgorithm") as String?
                                 val favorite = dataHashMap?.get(coinFavorite) as Boolean?
-                                val description =
-                                    dataHashMap?.get(coinDescription) as HashMap<*, *>?
-
+                                val description = dataHashMap?.get(coinDescription) as HashMap<*, *>?
                                 val marketData = dataHashMap?.get(coinImage) as HashMap<*, *>?
-
                                 val descriptionTr = description?.get("tr") as String?
-
                                 val smallImageUrl = image?.get("small")
-
                                 val thumb = image?.get("thumb") as String?
                                 val large = image?.get("large") as String?
                                 val small = image?.get("small") as String?

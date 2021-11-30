@@ -3,21 +3,16 @@ package com.bahaddindemir.bitcointicker.ui.home
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.databinding.FragmentHomeBinding
-import com.bahaddindemir.bitcointicker.extension.navigateSafe
 import com.bahaddindemir.bitcointicker.data.model.Status
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
-import com.bahaddindemir.bitcointicker.ui.adapter.CoinAdapter
 import com.bahaddindemir.bitcointicker.ui.base.BaseFragment
 import com.bahaddindemir.bitcointicker.ui.viewholder.CoinViewHolder
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,18 +25,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
 
     override fun setBindingVariables() {
         binding.viewModel = viewModel
-        //binding.coinsRecycler.adapter = binding.coinAdapter
-        /*binding.apply {
-            lifecycleOwner = this@HomeFragment
-            coinAdapter = CoinAdapter(this@HomeFragment)
-        }.root*/
     }
 
     override fun setUpViews() {
         initializeUI()
         loadCoinsMarkets(1)
-
-
     }
 
     override fun setupObservers() {

@@ -12,7 +12,6 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 @Suppress("LeakingThis")
 abstract class NetworkBoundRepository<ResultType, RequestType>
 internal constructor() {
-
     private val result: MediatorLiveData<CoinResource<ResultType>> = MediatorLiveData()
 
     init {

@@ -7,8 +7,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class AuthUseCase @Inject constructor()
-{
+class AuthUseCase @Inject constructor() {
     @Throws(LoginValidationException::class)
     operator fun invoke(request: AuthRequest): Flow<Any> = flow {
         if (request.email.isEmpty()) {

@@ -11,7 +11,8 @@
             android:id="@+id/fragmentContainerView"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_home" />
 
@@ -24,6 +25,7 @@
             app:itemIconTint="@color/button_background"
             app:itemTextColor="@color/white"
             app:labelVisibilityMode="labeled"
+            app:itemIconSize="40dp"
             app:menu="@menu/bottom_menu" />
     </LinearLayout>
 </layout>

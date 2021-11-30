@@ -1,16 +1,16 @@
 package com.bahaddindemir.bitcointicker.ui.home
 
 import android.content.Intent
+import android.view.MenuItem
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.onNavDestinationSelected
+import androidx.navigation.ui.setupWithNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.services.BackgroundRefreshService
 import com.bahaddindemir.bitcointicker.databinding.ActivityHomeBinding
 import com.bahaddindemir.bitcointicker.ui.base.BaseActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,14 +18,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override fun getLayoutId() = R.layout.activity_home
 
     override fun setUpBottomNavigation() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.main_bottom_navigation)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
-        NavigationUI.setupWithNavController(bottomNavigationView, navController)
-
-        //val navController: NavController =
-        //    Navigation.findNavController(this, R.id.fragmentContainerView)
-        //NavigationUI.setupWithNavController(binding.mainBottomNavigation, navController)
+        binding.mainBottomNavigation.setupWithNavController(navController)
     }
 
     override fun setUpViews() {
@@ -35,6 +31,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         stopService()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return item.onNavDestinationSelected(findNavController(R.id.fragmentContainerView))  ||
+                super.onOptionsItemSelected(item)
     }
 
     private fun startBackgroundService() {

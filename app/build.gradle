@@ -1,0 +1,107 @@
+import com.bahaddindemir.bitcointicker.buildsrc.Config
+import com.bahaddindemir.bitcointicker.buildsrc.Libraries
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs'
+    id 'com.google.gms.google-services'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId Config.AppConfig.appId
+        minSdk Config.AppConfig.minSdkVersion
+        targetSdk Config.AppConfig.compileSdkVersion
+        versionCode Config.AppConfig.versionCode
+        versionName Config.AppConfig.versionName
+
+        testInstrumentationRunner Config.AppConfig.testRunner
+    }
+
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "API_BASE_URL", Config.Environments.debugBaseUrl
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "API_BASE_URL", Config.Environments.releaseBaseUrl
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation Libraries.coreKtx
+    implementation Libraries.appCompat
+    implementation Libraries.materialDesign
+    implementation Libraries.constraintLayout
+    implementation Libraries.recyclerview
+    implementation Libraries.navigationKtx
+    testImplementation Libraries.jUnit
+    androidTestImplementation Libraries.jUnitExt
+    androidTestImplementation Libraries.espresso
+
+    // Hilt
+    implementation Libraries.hilt
+    kapt Libraries.hiltDaggerCompiler
+
+    // Networking
+    implementation Libraries.gson
+    implementation Libraries.retrofit
+    implementation Libraries.retrofitConverter
+    implementation Libraries.interceptor
+    implementation Libraries.chuckLogging
+
+    // Navigation
+    implementation Libraries.navigationFragment
+    implementation Libraries.navigationUI
+    implementation Libraries.navigationDynamicFeatures
+    androidTestImplementation Libraries.navigationTest
+
+    // Firebase
+    implementation platform(Libraries.firebaseBom)
+    implementation Libraries.firebaseAnalytics
+    implementation Libraries.firebaseAuth
+
+    // RX Java Android
+    implementation Libraries.rxJava
+    implementation Libraries.rxAndroid
+
+    // Room
+    implementation Libraries.roomRuntime
+    implementation Libraries.roomRxJava
+    kapt Libraries.roomCompiler
+
+    // LiveData ViewModel
+    implementation Libraries.lifeCycleView
+    implementation Libraries.lifeCycleLive
+
+
+    // FireStore
+    implementation Libraries.fireStore
+    implementation Libraries.hawk
+
+    // Glide
+    implementation Libraries.glide
+    kapt Libraries.glideCompiler
+}

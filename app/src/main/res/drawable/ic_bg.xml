@@ -1,0 +1,45 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="443dp"
+    android:height="444dp"
+    android:viewportWidth="443"
+    android:viewportHeight="444">
+  <path
+      android:strokeWidth="1"
+      android:pathData="M219,206m-199.5,0a199.5,199.5 0,1 1,399 0a199.5,199.5 0,1 1,-399 0"
+      android:fillColor="#00000000"
+      android:strokeColor="#5ED5A8"/>
+  <path
+      android:pathData="M219,206m-200,0a200,200 0,1 1,400 0a200,200 0,1 1,-400 0">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:gradientRadius="2132.3"
+          android:centerX="219"
+          android:centerY="206"
+          android:type="radial">
+        <item android:offset="0" android:color="#FF1B232A"/>
+        <item android:offset="1" android:color="#FF5ED5A8"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="M221.484,34.571L221.484,34.571A171.428,171.428 0,0 1,392.913 206L392.913,206A171.428,171.428 0,0 1,221.484 377.428L221.484,377.428A171.428,171.428 0,0 1,50.056 206L50.056,206A171.428,171.428 0,0 1,221.484 34.571z">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:startY="154.571"
+          android:startX="141.484"
+          android:endY="643.143"
+          android:endX="630.056"
+          android:type="linear">
+        <item android:offset="0" android:color="#FF1B232A"/>
+        <item android:offset="1" android:color="#FF5ED5A8"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <group>
+    <clip-path
+        android:pathData="M219,38.298L219,38.298A167.702,167.702 0,0 1,386.702 206L386.702,206A167.702,167.702 0,0 1,219 373.702L219,373.702A167.702,167.702 0,0 1,51.298 206L51.298,206A167.702,167.702 0,0 1,219 38.298z"/>
+    <path
+        android:pathData="M447.977,-509.958L996.235,-509.958A551.481,551.48 0,0 1,1547.716 41.522L1547.716,41.522A551.481,551.48 0,0 1,996.235 593.002L447.977,593.002A551.481,551.48 0,0 1,-103.504 41.522L-103.504,41.522A551.481,551.48 0,0 1,447.977 -509.958z"/>
+  </group>
+</vector>

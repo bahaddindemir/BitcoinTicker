@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_home"
+    app:startDestination="@id/home_fragment">
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.bahaddindemir.bitcointicker.ui.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_open_detail_fragment"
+            app:destination="@id/detail_fragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+        <action
+            android:id="@+id/action_open_my_coin_fragment"
+            app:destination="@id/my_coin_fragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+        <!--<argument
+            android:name="coinItem"
+            app:argType="com.bahaddindemir.bitcointicker.data.model.coin.CoinItem" />-->
+    </fragment>
+
+    <fragment
+        android:id="@+id/detail_fragment"
+        android:name="com.bahaddindemir.bitcointicker.ui.detail.DetailFragment"
+        android:label="DetailFragment"
+        tools:layout="@layout/fragment_detail" />
+
+    <fragment
+        android:id="@+id/my_coin_fragment"
+        android:name="com.bahaddindemir.bitcointicker.ui.mycoin.MyCoinFragment"
+        android:label="MyCoinFragment"
+        tools:layout="@layout/fragment_my_coin" />
+</navigation>

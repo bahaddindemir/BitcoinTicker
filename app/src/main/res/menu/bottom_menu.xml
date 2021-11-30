@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/marketFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_main"
+        android:menuCategory="secondary"
+        android:title="@string/home"
+        android:titleCondensed=""
+        app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/myCoinsFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_my_coins"
+        android:menuCategory="secondary"
+        android:title="@string/my_coins_fragment"
+        android:titleCondensed=""
+        app:showAsAction="ifRoom|withText" />
+
+</menu>

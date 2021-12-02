@@ -13,6 +13,8 @@ import com.bahaddindemir.bitcointicker.databinding.FragmentHomeBinding
 import com.bahaddindemir.bitcointicker.data.model.Status
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
+import com.bahaddindemir.bitcointicker.extension.showError
+import com.bahaddindemir.bitcointicker.ui.adapter.CoinAdapter
 import com.bahaddindemir.bitcointicker.ui.base.BaseFragment
 import com.bahaddindemir.bitcointicker.ui.viewholder.CoinViewHolder
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,11 +22,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegate {
     private val viewModel: HomeViewModel by viewModels()
+    private var coinAdapter = CoinAdapter(this)
 
     override fun getLayoutId() = R.layout.fragment_home
 
     override fun setBindingVariables() {
         binding.viewModel = viewModel
+        binding.coinsRecycler.adapter = coinAdapter
     }
 
     override fun setUpViews() {
@@ -49,13 +53,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
                 if (searchKey.isNotEmpty()) {
                     searchCoinsMarkets(searchKey).observe(viewLifecycleOwner, {
                         it?.run {
-                            binding.coinAdapter!!.setData(this)
+                            coinAdapter.setData(this)
                         }
                     })
                 } else {
                     searchFullCoinsMarkets().observe(viewLifecycleOwner, {
                         it?.run {
-                            binding.coinAdapter!!.setData(this)
+                            coinAdapter.setData(this)
                         }
                     })
                 }
@@ -91,17 +95,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
         viewModel.coinLiveData.observe(viewLifecycleOwner, { resource ->
             when (resource.status) {
                 Status.LOADING -> {
-                    binding.coinsProgress.visibility = View.VISIBLE
+                    showLoading()
                     binding.tableCoins.visibility = View.GONE
                     binding.coinsRecycler.visibility = View.GONE
                 }
                 Status.SUCCESS -> {
-                    binding.coinsProgress.visibility = View.GONE
+                    hideLoading()
                     binding.tableCoins.visibility = View.VISIBLE
                     binding.coinsRecycler.visibility = View.VISIBLE
                 }
                 Status.ERROR -> {
-                    binding.coinsProgress.visibility = View.GONE
+                    hideLoading()
+                    showError(getString(R.string.some_error))
                 }
             }
         })
@@ -119,7 +124,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
 
     override fun onItemClick(coinItem: CoinItem, view: View) {
         val bundle = bundleOf("coinItem" to coinItem)
-        //navigateSafe(HomeFragmentDirections.actionOpenDetailFragment())
         view.findNavController().navigate(R.id.detail_fragment, bundle)
     }
 }

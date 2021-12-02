@@ -10,13 +10,16 @@ import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.Status
 import com.bahaddindemir.bitcointicker.data.model.coin.*
 import com.bahaddindemir.bitcointicker.databinding.FragmentDetailBinding
+import com.bahaddindemir.bitcointicker.extension.navigateSafe
+import com.bahaddindemir.bitcointicker.extension.showError
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
 import com.bahaddindemir.bitcointicker.ui.base.BaseFragment
-import com.bahaddindemir.bitcointicker.util.SharedPreferenceHelper
+import com.bahaddindemir.bitcointicker.util.AppPreferences
 import com.bahaddindemir.bitcointicker.util.setImageWithGlide
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailFragment : BaseFragment<FragmentDetailBinding>() {
@@ -33,6 +36,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
     private var confirmIntervalTime: Long = 0L
 
+    @Inject lateinit var appPreferences: AppPreferences
+
     companion object {
         private const val WHAT_MSG = 1
         const val DEFAULT_CURRENCY = "DEFAULT_CURRENCY"
@@ -44,9 +49,25 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         }
     }
 
+    override fun getFragmentArguments() {
+        super.getFragmentArguments()
+        initAndRefreshIntervalTime()
+        val bundle = arguments
+        bundle?.let {
+            coinItem = it.get("coinItem") as CoinItem
+            loadCoinDetail(coinItem)
+            initializeToolbar(coinItem)
+        }
+    }
+
     override
     fun setBindingVariables() {
         binding.viewModel = viewModel
+    }
+
+    override fun setupObservers() {
+        setClickListeners()
+        observeCoinDetailData()
     }
 
     private fun initAndRefreshIntervalTime() {
@@ -71,27 +92,14 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         })
     }
 
-    override fun setUpViews() {
-        initAndRefreshIntervalTime()
-        val bundle = arguments
-        bundle?.let {
-            coinItem = it.get("coinItem") as CoinItem
-            loadCoinDetail(coinItem)
-            initializeToolbar(coinItem)
-        }
-    }
-
-    override fun setupObservers() {
-        setClickListeners()
-        observeCoinDetailData()
-    }
-
     private fun observeCoinDetailData() {
         viewModel.coinDetailLiveData.observe(viewLifecycleOwner, { resource ->
             when (resource.status) {
                 Status.LOADING -> {
+                    showLoading()
                 }
                 Status.SUCCESS -> {
+                    hideLoading()
                     resource?.let {
                         setDetails(it.data)
 
@@ -111,7 +119,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                     mHandler.sendMessageDelayed(msg, refreshIntervalTime)
                 }
                 Status.ERROR -> {
-
+                    hideLoading()
+                    showError(getString(R.string.some_error))
                 }
             }
         })
@@ -120,6 +129,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     private fun setClickListeners() {
         binding.confirmBtn.setOnClickListener {
             setIntervalTime(if (confirmIntervalTime != 0L) confirmIntervalTime else refreshIntervalTime)
+        }
+        viewModel.failResponse.observe(this) {
+            binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
         }
     }
 
@@ -159,28 +171,27 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
     private fun setCurrentPrice(currentPrice: CurrentPrice?) {
         currentPrice?.run {
-            val defaultCurrency =
-                SharedPreferenceHelper.getSharedData(DEFAULT_CURRENCY) as? String
-            if (!defaultCurrency.isNullOrEmpty()) {
-                val currentPriceStr: String = when (defaultCurrency) {
-                    "TRY" -> {
-                        this.tryX.toString()
-                    }
-                    "USD" -> {
-                        this.usd.toString()
-                    }
-                    "ETH" -> {
-                        this.eth.toString()
-                    }
-                    else -> {
-                        this.btc.toString()
-                    }
+            val defaultCurrency = appPreferences.defaultCurrency
+            //var defaultCurrency = SharedPreferenceHelper.getSharedData(DEFAULT_CURRENCY) as? String
+            //if (defaultCurrency.isNullOrEmpty())    defaultCurrency = "BTC"
+            val currentPriceStr: String = when (defaultCurrency) {
+                "TRY" -> {
+                    this.tryX.toString()
                 }
-                val combineString = "$currentPriceStr $defaultCurrency"
-                binding.currentPrice.text = combineString
-                binding.currentPriceTxt.visibility = View.VISIBLE
-                binding.currentPriceLine.visibility = View.VISIBLE
+                "USD" -> {
+                    this.usd.toString()
+                }
+                "ETH" -> {
+                    this.eth.toString()
+                }
+                else -> {
+                    this.btc.toString()
+                }
             }
+            val combineString = "$currentPriceStr $defaultCurrency"
+            binding.currentPrice.text = combineString
+            binding.currentPriceTxt.visibility = View.VISIBLE
+            binding.currentPriceLine.visibility = View.VISIBLE
         }
     }
 
@@ -226,16 +237,19 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                 coinDetailItem?.run {
                     val firebaseUserData = authViewMode.user?.let { fireBaseUser ->
                         isFavoriteCoin = if (isFavoriteCoin) {
-                            binding.toolbar.add.setBackgroundResource(R.drawable.ic_add_fovorite)
+                            binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
                             false
                         } else {
-                            binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
+                            binding.toolbar.add.setBackgroundResource(R.drawable.ic_add_fovorite)
                             true
                         }
                         viewModel.onAddFavoriteFireStore(fireBaseUser, this)
                     }
                 }
             }
+        }
+        binding.toolbar.back.setOnClickListener {
+            navigateSafe(DetailFragmentDirections.actionOpenHomeFragment())
         }
     }
 

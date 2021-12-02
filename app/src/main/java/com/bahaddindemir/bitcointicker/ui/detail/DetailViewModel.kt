@@ -1,6 +1,5 @@
 package com.bahaddindemir.bitcointicker.ui.detail
 
-import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.*
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
@@ -27,23 +26,18 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
     //Todo: Integrate to fragment res file
     private var coinItem: MutableLiveData<String> = MutableLiveData()
     private var coinItemId: MutableLiveData<String> = MutableLiveData()
-    var coinDetailLiveData: LiveData<CoinResource<CoinDetailItem>>
+    var coinDetailLiveData: LiveData<CoinResource<CoinDetailItem>> =
+        this.coinItem.switchMap { coinItem ->
+            launchOnViewModelScope {
+                this.coinRepository.loadCoinDetail(coinItem)
+            }
+        }
 
     val successResponse = SingleLiveEvent<Void>()
     val failResponse = SingleLiveEvent<Void>()
     private val disposables = CompositeDisposable()
     val favourite = ObservableBoolean()
     private lateinit var coinDetailItem: CoinDetailItem
-
-    init {
-        Log.v(this.toString(),"Injection MainActivityViewModel")
-
-        this.coinDetailLiveData = this.coinItem.switchMap { coinItem ->
-            launchOnViewModelScope {
-                this.coinRepository.loadCoinDetail(coinItem)
-            }
-        }
-    }
 
     fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
         val disposable = coinRepository.dataAddCoinFavorite(firebaseUser, coinDetailItem)
@@ -59,5 +53,5 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
         disposables.add(disposable)
     }
 
-    fun postCoinDetailId(currencyItemId: String) = this.coinItem.postValue(currencyItemId)
+    fun postCoinDetailId(coinItemId: String) = this.coinItem.postValue(coinItemId)
 }

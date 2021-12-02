@@ -12,14 +12,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tableCoins"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/coinImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:padding="8dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="16dp"
             app:bindingCoinImageUrl="@{coinItem.image}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,12 +28,12 @@
 
         <LinearLayout
             android:id="@+id/coinContainer"
-            android:layout_width="60dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="8dp"
+            android:padding="14dp"
             app:layout_constraintStart_toEndOf="@+id/coinImage"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -46,6 +46,7 @@
                 android:text="@{coinItem.name}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:maxLines="1"
                 tools:text="Bitcoin" />
 
             <TextView
@@ -68,7 +69,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="8dp"
+            android:padding="14dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 

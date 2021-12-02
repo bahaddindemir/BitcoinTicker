@@ -40,7 +40,7 @@
                 android:inputType="textCapWords|textPersonName"
                 android:padding="8dp"
                 android:singleLine="true"
-                android:textColor="@color/gray"
+                android:textColor="@color/splash"
                 android:textSize="13sp" />
 
             <ImageView

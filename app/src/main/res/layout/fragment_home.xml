@@ -6,10 +6,6 @@
         <variable
             name="viewModel"
             type="com.bahaddindemir.bitcointicker.ui.home.HomeViewModel" />
-
-        <variable
-            name="coinAdapter"
-            type="com.bahaddindemir.bitcointicker.ui.adapter.CoinAdapter" />
     </data>
 
     <RelativeLayout
@@ -37,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_marginStart="76dp"
+                android:layout_marginStart="16dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="8dp"
@@ -53,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:paddingStart="24dp"
                 android:paddingTop="8dp"
@@ -81,13 +77,5 @@
             app:adapterCoin="@{viewModel.coinLiveData}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_coin" />
-<!--app:adapter="@{coinAdapter}"-->
-        <ProgressBar
-            android:id="@+id/coinsProgress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:visibility="gone" />
     </RelativeLayout>
 </layout>

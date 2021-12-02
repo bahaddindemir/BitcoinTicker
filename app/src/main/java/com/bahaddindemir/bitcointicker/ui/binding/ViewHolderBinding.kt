@@ -48,11 +48,11 @@ fun bindingMarketCapToText(textView: TextView, value: Float) {
     val defaultCurrency = "DEFAULT_CURRENCY"
     val castValue = value.toString()
     var combineString = ""
-    val currency = SharedPreferenceHelper.getSharedData(defaultCurrency) as String?
-    currency?.let {
+    var currency = SharedPreferenceHelper.getSharedData(defaultCurrency) as String?
+    if (currency == null)   currency = "BTC"
+    currency.let {
         combineString = if (castValue.length >= 6) {
             "${castValue.substring(0, 6)} $it"
-
         } else {
             "$castValue $it"
         }

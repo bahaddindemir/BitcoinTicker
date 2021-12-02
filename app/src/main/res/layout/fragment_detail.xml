@@ -60,13 +60,6 @@
 
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/detailProgress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone" />
-
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

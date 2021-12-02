@@ -29,8 +29,7 @@
         <LinearLayout
             android:id="@+id/coinContainer"
             android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="14dp"
@@ -42,10 +41,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="4dp"
                 android:text="@{coinItem.name}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:textAlignment="center"
                 android:maxLines="1"
                 tools:text="Bitcoin" />
 
@@ -54,18 +53,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:text="@{coinItem.symbol.toUpperCase()}"
                 android:textColor="@color/white"
                 android:textSize="12sp"
+                android:textAlignment="center"
                 tools:text="BTC" />
-
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/priceContainer"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:gravity="center"
             android:orientation="vertical"
@@ -89,9 +88,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:padding="8dp"
-                android:textColor="@color/button_background"
+                android:textColor="@color/white"
                 android:textSize="12sp"
                 app:bindingPriceChangePercentage24hToText="@{coinItem.priceChangePercentage24h}"
                 tools:text="-1.5603" />

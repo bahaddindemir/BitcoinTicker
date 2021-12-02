@@ -2,7 +2,6 @@ package com.bahaddindemir.bitcointicker.data.repository.coin
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.bahaddindemir.bitcointicker.data.local.CoinDao
 import com.bahaddindemir.bitcointicker.data.model.ApiResponse
 import com.bahaddindemir.bitcointicker.data.model.Envelope
@@ -43,10 +42,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 }
 
                 override fun loadFromDb(): LiveData<CoinDetailItem> {
-                    val coinDetailItem = getCoinDetail(coinItemId)
-                    val data: MutableLiveData<CoinDetailItem> = MutableLiveData()
-                    data.postValue(coinDetailItem)
-                    return data
+                    return getCoinDetail(coinItemId)
                 }
 
                 override fun fetchService(): LiveData<ApiResponse<CoinDetailItem>> {
@@ -56,14 +52,12 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 override fun onFetchFailed(envelope: Envelope?) {
                     Log.w(this.toString(),"onFetchFailed : $envelope")
                 }
-
             }.asLiveData()
         }
 
     override suspend fun loadCoins(page: Int): LiveData<CoinResource<List<CoinItem>>> =
         withContext(Dispatchers.IO) {
-            return@withContext object :
-                NetworkBoundRepository<List<CoinItem>, List<CoinItem>>() {
+            return@withContext object : NetworkBoundRepository<List<CoinItem>, List<CoinItem>>() {
                 override fun saveFetchData(items: List<CoinItem>) {
                     items.let {
                         coinDao.insertCoins(it)
@@ -81,9 +75,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 override fun fetchService(): LiveData<ApiResponse<List<CoinItem>>> {
                     val map = HashMap<String, Any>()
                     val defaultCurrency = appPreferences.defaultCurrency
-                    defaultCurrency?.let {
-                        map[vsCurrency] = it.lowercase(Locale.ROOT)
-                    }
+                    defaultCurrency?.let { map[vsCurrency] = it.lowercase(Locale.ROOT) }
                     map[order] = "market_cap_desc"
                     map[pageMap] = page
                     map[perPage] = "20"
@@ -105,11 +97,9 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
 
     override fun getCoinList() = coinDao.getCoins()
 
-    override fun getSearchCoinList(searchKey: String) =
-        coinDao.searchCoins(searchKey)
+    override fun getSearchCoinList(searchKey: String) = coinDao.searchCoins(searchKey)
 
-    override fun getCoinDetail(coinItemId: String) =
-        coinDao.getCoinDetail(coinItemId)
+    override fun getCoinDetail(coinItemId: String) = coinDao.getCoinDetail(coinItemId)
 
     override fun getCoinFavoriteUpdate(coinDetailItem: CoinDetailItem) {
         coinDao.updateCoinDetail(coinDetailItem)

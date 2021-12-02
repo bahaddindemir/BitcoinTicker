@@ -23,7 +23,7 @@ interface CoinRepository {
 
     fun getSearchCoinList(searchKey: String) : LiveData<List<CoinItem>>
 
-    fun getCoinDetail(coinItemId: String) : CoinDetailItem
+    fun getCoinDetail(coinItemId: String) : LiveData<CoinDetailItem>
 
     fun getCoinFavoriteUpdate(coinDetailItem: CoinDetailItem)
 }

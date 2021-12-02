@@ -25,10 +25,13 @@ class MyCoinFragment : BaseFragment<FragmentMyCoinBinding>(), MyCoinViewHolder.D
     private val viewModel: HomeViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
 
+    private val myCoinAdapter = MyCoinAdapter(this)
+
     override fun getLayoutId() = R.layout.fragment_my_coin
 
     override fun setBindingVariables() {
         binding.viewModel = viewModel
+        binding.myCoinsRecyclerview.adapter = myCoinAdapter
     }
 
     override fun setupObservers() {
@@ -36,15 +39,11 @@ class MyCoinFragment : BaseFragment<FragmentMyCoinBinding>(), MyCoinViewHolder.D
         firebaseUser?.let {
             subscribeGetMyCoinFavoriteList(firebaseUser)
         }
-
-        myCoinAdapter = MyCoinAdapter(this)
     }
 
     private val firebaseStore: FirebaseFirestore by lazy {
         FirebaseFirestore.getInstance()
     }
-
-    lateinit var myCoinAdapter: MyCoinAdapter
 
     private val disposables = CompositeDisposable()
 

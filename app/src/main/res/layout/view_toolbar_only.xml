@@ -22,11 +22,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
-                android:gravity="start"
                 android:textColor="@color/white"
                 android:textSize="24sp"
+                android:textAlignment="center"
                 tools:text="@string/title" />
-
         </LinearLayout>
 
         <RelativeLayout

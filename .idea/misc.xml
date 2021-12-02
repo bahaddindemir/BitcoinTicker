@@ -3,13 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/drawable/ic_remove_favorite.xml" value="0.215625" />
-        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/fragment_detail.xml" value="0.19947916666666668" />
-        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/fragment_home.xml" value="0.3546875" />
-        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/fragment_my_coin.xml" value="0.19947916666666668" />
-        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/item_coin.xml" value="0.3546875" />
-        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/view_toolbar.xml" value="0.19947916666666668" />
-        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/view_toolbar_only.xml" value="0.19947916666666668" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/drawable/bg_search.xml" value="0.13072916666666667" />
         <entry key="app/src/main/res/drawable/bottom_menu.xml" value="0.13072916666666667" />
@@ -35,11 +28,11 @@
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2231796049869435" />
         <entry key="app/src/main/res/layout/fragment_intro.xml" value="0.31726283048211507" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_my_coin.xml" value="0.11458333333333333" />
+        <entry key="app/src/main/res/layout/fragment_my_coin.xml" value="0.1487364418009396" />
         <entry key="app/src/main/res/layout/fragment_my_coins.xml" value="0.11458333333333333" />
         <entry key="app/src/main/res/layout/fragment_signup.xml" value="0.1834709353840751" />
         <entry key="app/src/main/res/layout/fragment_tutorial.xml" value="0.12239583333333333" />
-        <entry key="app/src/main/res/layout/item_coin.xml" value="0.23114953139387617" />
+        <entry key="app/src/main/res/layout/item_coin.xml" value="0.3975093195805463" />
         <entry key="app/src/main/res/layout/item_my_coins.xml" value="0.3408317630726639" />
         <entry key="app/src/main/res/layout/progress_dialog.xml" value="0.165" />
         <entry key="app/src/main/res/layout/view_toolbar.xml" value="0.43299331169627664" />

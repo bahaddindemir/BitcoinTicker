@@ -7,6 +7,5 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AuthActivity : BaseActivity<ActivityAuthBinding>() {
-    override
-    fun getLayoutId() = R.layout.activity_auth
+    override fun getLayoutId() = R.layout.activity_auth
 }

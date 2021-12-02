@@ -4,6 +4,7 @@ import android.os.*
 import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.viewModels
 import com.bahaddindemir.bitcointicker.R
@@ -66,8 +67,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     }
 
     override fun setupObservers() {
-        setClickListeners()
         observeCoinDetailData()
+        setClickListeners()
     }
 
     private fun initAndRefreshIntervalTime() {
@@ -84,9 +85,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    if (it.isNotEmpty()) {
-                        confirmIntervalTime = it.trim().toString().toLong()
-                    }
+                    confirmIntervalTime = it.trim().toString().toLong()
                 }
             }
         })
@@ -94,6 +93,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
     private fun observeCoinDetailData() {
         viewModel.coinDetailLiveData.observe(viewLifecycleOwner, { resource ->
+            Log.w("test", resource.toString())
+            //ToDo: java.lang.NumberFormatException: Expected a long but was 5713.01
             when (resource.status) {
                 Status.LOADING -> {
                     showLoading()
@@ -108,9 +109,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                         it.data?.image?.small?.run {
                             toolbarCenterLogo(this)
                         }
-
                         it.data?.isFavorite?.run {
-
+                            isFavoriteCoin = true
                         }
                     }
 
@@ -132,6 +132,23 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         }
         viewModel.failResponse.observe(this) {
             binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
+        }
+        binding.toolbar.add.setOnClickListener {
+            coinDetailItem?.run {
+                authViewMode.user?.let { fireBaseUser ->
+                    isFavoriteCoin = if (isFavoriteCoin) {
+                        binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
+                        false
+                    } else {
+                        binding.toolbar.add.setBackgroundResource(R.drawable.ic_add_fovorite)
+                        true
+                    }
+                    viewModel.onAddFavoriteFireStore(fireBaseUser, this)
+                }
+            }
+        }
+        binding.toolbar.back.setOnClickListener {
+            navigateSafe(DetailFragmentDirections.actionOpenHomeFragment())
         }
     }
 
@@ -172,8 +189,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     private fun setCurrentPrice(currentPrice: CurrentPrice?) {
         currentPrice?.run {
             val defaultCurrency = appPreferences.defaultCurrency
-            //var defaultCurrency = SharedPreferenceHelper.getSharedData(DEFAULT_CURRENCY) as? String
-            //if (defaultCurrency.isNullOrEmpty())    defaultCurrency = "BTC"
             val currentPriceStr: String = when (defaultCurrency) {
                 "TRY" -> {
                     this.tryX.toString()
@@ -228,28 +243,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     private fun initializeToolbar(coinItem: CoinItem?) {
         binding.toolbar.back.visibility = View.VISIBLE
         binding.toolbar.add.visibility = View.VISIBLE
-        binding.toolbar.add.setBackgroundResource(R.drawable.splash_background)
         coinItem?.let {
             binding.toolbar.title.text = it.name
-        }
-        binding.toolbar.add.let {
-            it.setOnClickListener {
-                coinDetailItem?.run {
-                    val firebaseUserData = authViewMode.user?.let { fireBaseUser ->
-                        isFavoriteCoin = if (isFavoriteCoin) {
-                            binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
-                            false
-                        } else {
-                            binding.toolbar.add.setBackgroundResource(R.drawable.ic_add_fovorite)
-                            true
-                        }
-                        viewModel.onAddFavoriteFireStore(fireBaseUser, this)
-                    }
-                }
-            }
-        }
-        binding.toolbar.back.setOnClickListener {
-            navigateSafe(DetailFragmentDirections.actionOpenHomeFragment())
         }
     }
 

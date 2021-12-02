@@ -1,6 +1,5 @@
 package com.bahaddindemir.bitcointicker.ui.detail
 
-import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.*
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
@@ -23,21 +22,15 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
         }
     }
 
-    //Todo: Integrate to fragment res file
     private var coinItem: MutableLiveData<String> = MutableLiveData()
-    private var coinItemId: MutableLiveData<String> = MutableLiveData()
     var coinDetailLiveData: LiveData<CoinResource<CoinDetailItem>> =
         this.coinItem.switchMap { coinItem ->
-            launchOnViewModelScope {
-                this.coinRepository.loadCoinDetail(coinItem)
-            }
+            launchOnViewModelScope { this.coinRepository.loadCoinDetail(coinItem) }
         }
 
     val successResponse = SingleLiveEvent<Void>()
     val failResponse = SingleLiveEvent<Void>()
     private val disposables = CompositeDisposable()
-    val favourite = ObservableBoolean()
-    private lateinit var coinDetailItem: CoinDetailItem
 
     fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
         val disposable = coinRepository.dataAddCoinFavorite(firebaseUser, coinDetailItem)
@@ -46,9 +39,7 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
             .subscribe({
                 successResponse.call()
             }, {
-                it.message?.run {
-                    failResponse.call()
-                }
+                failResponse.call()
             })
         disposables.add(disposable)
     }

@@ -14,7 +14,7 @@ interface ApiService {
     @Headers("Accept: application/json")
     fun fetchCoins(@QueryMap map: HashMap<String, Any>): LiveData<ApiResponse<List<CoinItem>>>
 
-    @GET("coins/{coinId}")
+    @GET("coins/{id}")
     @Headers("Accept: application/json")
-    fun fetchCoinsDetail(@Path("coinId") coinId: String): LiveData<ApiResponse<CoinDetailItem>>
+    fun fetchCoinsDetail(@Path("id") id: String): LiveData<ApiResponse<CoinDetailItem>>
 }

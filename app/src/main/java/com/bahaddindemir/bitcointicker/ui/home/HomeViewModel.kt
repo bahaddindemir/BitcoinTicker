@@ -5,9 +5,7 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.model.FetchStatus
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
-
 import com.bahaddindemir.bitcointicker.ui.base.BaseViewModel
-import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -22,7 +20,6 @@ class HomeViewModel @Inject constructor(private val coinRepository: CoinReposito
 
     private var coinListPage: MutableLiveData<Int> = MutableLiveData()
     private var searchKeyCoin: MutableLiveData<String> = MutableLiveData()
-    private var firebaseUser: MutableLiveData<FirebaseUser> = MutableLiveData()
     private var fetchStatus = FetchStatus()
 
     val coinLiveData: LiveData<CoinResource<List<CoinItem>>> = this.coinListPage.switchMap { page ->

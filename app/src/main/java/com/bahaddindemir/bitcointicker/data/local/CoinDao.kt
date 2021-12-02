@@ -26,5 +26,5 @@ interface CoinDao {
     fun updateCoinDetail(coinDetailItem: CoinDetailItem)
 
     @Query("SELECT * FROM CoinDetailItem WHERE id = :coinItemId")
-    fun getCoinDetail(coinItemId: String): CoinDetailItem
+    fun getCoinDetail(coinItemId: String): LiveData<CoinDetailItem>
 }

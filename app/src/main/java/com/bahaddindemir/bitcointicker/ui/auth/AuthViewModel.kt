@@ -86,9 +86,7 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     private fun authUseCase() {
         authUseCase(request)
             .catch { exception -> validationException.value = exception.message?.toInt() }
-            .onEach { result ->
-                _authResponse.value = result
-            }
+            .onEach { result -> _authResponse.value = result }
             .launchIn(viewModelScope)
     }
 }

@@ -4,7 +4,6 @@ import android.os.*
 import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.viewModels
 import com.bahaddindemir.bitcointicker.R
@@ -41,7 +40,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
     companion object {
         private const val WHAT_MSG = 1
-        const val DEFAULT_CURRENCY = "DEFAULT_CURRENCY"
     }
 
     private val mHandler = object : Handler(Looper.getMainLooper()) {
@@ -93,8 +91,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
     private fun observeCoinDetailData() {
         viewModel.coinDetailLiveData.observe(viewLifecycleOwner, { resource ->
-            Log.w("test", resource.toString())
-            //ToDo: java.lang.NumberFormatException: Expected a long but was 5713.01
             when (resource.status) {
                 Status.LOADING -> {
                     showLoading()

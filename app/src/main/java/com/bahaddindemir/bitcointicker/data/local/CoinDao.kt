@@ -19,9 +19,6 @@ interface CoinDao {
     @Query("SELECT * FROM CoinItem WHERE name LIKE '%' || :searchKey || '%' OR '%' || :searchKey || '%'")
     fun searchCoins(searchKey: String): LiveData<List<CoinItem>>
 
-    @Query("SELECT * FROM CoinItem")
-    fun searchFullCoins(): LiveData<List<CoinItem>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun updateCoinDetail(coinDetailItem: CoinDetailItem)
 

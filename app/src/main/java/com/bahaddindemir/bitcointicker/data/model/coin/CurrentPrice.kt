@@ -103,7 +103,7 @@ data class CurrentPrice(
     @SerializedName("usd")
     val usd: Double,
     @SerializedName("vef")
-    val vef: Long,
+    val vef: Double,
     @SerializedName("vnd")
     val vnd: Double,
     @SerializedName("xag")

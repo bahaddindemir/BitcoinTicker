@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/drawable/ic_bg.xml" value="0.215625" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/drawable/ic_fg.xml" value="0.215625" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/drawable/ic_main.xml" value="0.215625" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/drawable/splash_background.xml" value="0.215625" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/fragment_detail.xml" value="0.21467391304347827" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/item_coin.xml" value="0.21467391304347827" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/drawable/bg_search.xml" value="0.13072916666666667" />
         <entry key="app/src/main/res/drawable/bottom_menu.xml" value="0.13072916666666667" />

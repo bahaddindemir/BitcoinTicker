@@ -28,8 +28,8 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
 {
     override var isLoading: Boolean = false
 
-    override suspend fun loadCoinDetail(coinItemId: String):
-            LiveData<CoinResource<CoinDetailItem>> = withContext(Dispatchers.IO) {
+    override suspend fun loadCoinDetail(coinItemId: String): LiveData<CoinResource<CoinDetailItem>> =
+        withContext(Dispatchers.IO) {
             return@withContext object : NetworkBoundRepository<CoinDetailItem, CoinDetailItem>() {
                 override fun saveFetchData(items: CoinDetailItem) {
                     items.let {
@@ -90,9 +90,19 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
             }.asLiveData()
         }
 
-    override fun dataAddCoinFavorite(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
+    override fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>> = coinDao.getFavoriteCoins()
+
+    override fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
         fireStore.addCoinToFavorite(firebaseUser, coinDetailItem)
 
+    override fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
+        fireStore.deleteFavoriteCoin(firebaseUser, coinDetailItem)
+
+    override fun updateFavoriteCoin(coinDetailItem: CoinDetailItem) {
+        coinDao.updateCoinDetail(coinDetailItem)
+    }
+
+    //ToDo: Implement get favorites
     //fun getMyFavoriteCoinList(firebaseUser: FirebaseUser) = fireStore.getMyCoinFavoriteList(firebaseUser)
 
     override fun getCoinList() = coinDao.getCoins()
@@ -100,10 +110,6 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
     override fun getSearchCoinList(searchKey: String) = coinDao.searchCoins(searchKey)
 
     override fun getCoinDetail(coinItemId: String) = coinDao.getCoinDetail(coinItemId)
-
-    override fun getCoinFavoriteUpdate(coinDetailItem: CoinDetailItem) {
-        coinDao.updateCoinDetail(coinDetailItem)
-    }
 
     companion object {
         private const val order = "market_cap_desc"

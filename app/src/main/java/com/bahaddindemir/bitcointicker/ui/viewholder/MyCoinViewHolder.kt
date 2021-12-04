@@ -2,7 +2,7 @@ package com.bahaddindemir.bitcointicker.ui.viewholder
 
 import android.view.View
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
-import com.bahaddindemir.bitcointicker.databinding.ItemMyCoinsBinding
+import com.bahaddindemir.bitcointicker.databinding.ItemMyCoinBinding
 import com.bahaddindemir.bitcointicker.ui.base.BaseViewHolder
 import com.bahaddindemir.bitcointicker.util.bindings
 
@@ -12,7 +12,7 @@ class MyCoinViewHolder(view: View, private val delegate: Delegate) : BaseViewHol
     }
 
     private lateinit var coinDetailItem: CoinDetailItem
-    private val binding by bindings<ItemMyCoinsBinding>(view)
+    private val binding by bindings<ItemMyCoinBinding>(view)
 
     override fun bindData(data: Any) {
         if (data is CoinDetailItem) {
@@ -32,5 +32,4 @@ class MyCoinViewHolder(view: View, private val delegate: Delegate) : BaseViewHol
     }
 
     override fun onLongClick(v: View?): Boolean = false
-
 }

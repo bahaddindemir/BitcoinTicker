@@ -24,4 +24,7 @@ interface CoinDao {
 
     @Query("SELECT * FROM CoinDetailItem WHERE id = :coinItemId")
     fun getCoinDetail(coinItemId: String): LiveData<CoinDetailItem>
+
+    @Query("SELECT * FROM CoinDetailItem WHERE isFavorite = 1")
+    fun getFavoriteCoins(): LiveData<List<CoinDetailItem>>
 }

@@ -17,7 +17,7 @@ fun bindAdapterCoin(view: RecyclerView, resource: CoinResource<List<CoinItem>>?)
 }
 
 @BindingAdapter("adapterMyCoin")
-fun bindAdapterMyCoin(view: RecyclerView, resource: CoinResource<List<CoinDetailItem>>?) {
+fun bindAdapterMyCoin(view: RecyclerView, resource: List<CoinDetailItem>?) {
     if (resource != null) {
         val adapter = view.adapter as? MyCoinAdapter
         adapter?.addCurrencyItemList(resource)

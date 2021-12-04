@@ -33,7 +33,19 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
     private val disposables = CompositeDisposable()
 
     fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
-        val disposable = coinRepository.dataAddCoinFavorite(firebaseUser, coinDetailItem)
+        val disposable = coinRepository.addFavoriteCoin(firebaseUser, coinDetailItem)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                successResponse.call()
+            }, {
+                failResponse.call()
+            })
+        disposables.add(disposable)
+    }
+
+    fun onDeleteFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
+        val disposable = coinRepository.deleteFavoriteCoin(firebaseUser, coinDetailItem)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

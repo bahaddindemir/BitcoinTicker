@@ -26,8 +26,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
     private val authViewMode : AuthViewModel by viewModels()
 
-    override fun getLayoutId() = R.layout.fragment_detail
-
     private lateinit var coinItem: CoinItem
     private var coinDetailItem: CoinDetailItem? = null
     private var refreshIntervalTime: Long = 2000L
@@ -47,6 +45,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
             loadCoinDetail(coinItem)
         }
     }
+
+    override fun getLayoutId() = R.layout.fragment_detail
 
     override fun getFragmentArguments() {
         super.getFragmentArguments()
@@ -106,7 +106,10 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                             toolbarCenterLogo(this)
                         }
                         it.data?.isFavorite?.run {
-                            isFavoriteCoin = true
+                            isFavoriteCoin = this
+                            if (isFavoriteCoin) {
+                                binding.toolbar.add.setImageResource(R.drawable.ic_add_fovorite)
+                            }
                         }
                     }
 
@@ -123,23 +126,23 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     }
 
     private fun setClickListeners() {
-        binding.confirmBtn.setOnClickListener {
-            setIntervalTime(if (confirmIntervalTime != 0L) confirmIntervalTime else refreshIntervalTime)
+        viewModel.successResponse.observe(this) {
+            handleFavoriteButton()
         }
         viewModel.failResponse.observe(this) {
-            binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
+            showError(getString(R.string.some_error))
+        }
+        binding.confirmBtn.setOnClickListener {
+            setIntervalTime(if (confirmIntervalTime != 0L) confirmIntervalTime else refreshIntervalTime)
         }
         binding.toolbar.add.setOnClickListener {
             coinDetailItem?.run {
                 authViewMode.user?.let { fireBaseUser ->
-                    isFavoriteCoin = if (isFavoriteCoin) {
-                        binding.toolbar.add.setBackgroundResource(R.drawable.ic_remove_favorite)
-                        false
+                    if (!isFavoriteCoin) {
+                        viewModel.onAddFavoriteFireStore(fireBaseUser, this)
                     } else {
-                        binding.toolbar.add.setBackgroundResource(R.drawable.ic_add_fovorite)
-                        true
+                        viewModel.onDeleteFavoriteFireStore(fireBaseUser, this)
                     }
-                    viewModel.onAddFavoriteFireStore(fireBaseUser, this)
                 }
             }
         }
@@ -270,5 +273,14 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
         val df = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.getDefault())
         return df.format(c)
+    }
+
+    private fun handleFavoriteButton() {
+        if (isFavoriteCoin) {
+            binding.toolbar.add.setImageResource(R.drawable.ic_favorite)
+        } else {
+            binding.toolbar.add.setImageResource(R.drawable.ic_add_fovorite)
+        }
+        isFavoriteCoin = !isFavoriteCoin
     }
 }

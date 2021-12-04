@@ -31,6 +31,24 @@ class FireStoreSource @Inject constructor() {
             }
         }
 
+    fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
+        Completable.create { emitter -> val documentFavorite =
+            firebaseStore.collection(coinCollectionName).document(firebaseUser.uid)
+
+            val collectionMyFavorite = documentFavorite.collection(favoriteList)
+
+            if (!emitter.isDisposed) {
+                collectionMyFavorite.document()
+                    .delete()
+                    .addOnSuccessListener {
+                        emitter.onComplete()
+                    }
+                    .addOnFailureListener {
+                        emitter.onError(it)
+                    }
+            }
+        }
+
     companion object {
         const val coinCollectionName = "FavoriteCoins"
         const val favoriteList = "favoriteList"

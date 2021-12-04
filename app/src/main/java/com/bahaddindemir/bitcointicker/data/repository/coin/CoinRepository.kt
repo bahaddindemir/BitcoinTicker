@@ -14,7 +14,13 @@ interface CoinRepository {
 
     suspend fun loadCoins(page: Int): LiveData<CoinResource<List<CoinItem>>>
 
-    fun dataAddCoinFavorite(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) : Completable
+    fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>>
+
+    fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) : Completable
+
+    fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) : Completable
+
+    fun updateFavoriteCoin(coinDetailItem: CoinDetailItem)
 
     //ToDo: Implement get favorites
     //fun getMyFavoriteCoinList(firebaseUser: FirebaseUser)
@@ -24,6 +30,4 @@ interface CoinRepository {
     fun getSearchCoinList(searchKey: String) : LiveData<List<CoinItem>>
 
     fun getCoinDetail(coinItemId: String) : LiveData<CoinDetailItem>
-
-    fun getCoinFavoriteUpdate(coinDetailItem: CoinDetailItem)
 }

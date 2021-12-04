@@ -2,6 +2,7 @@ package com.bahaddindemir.bitcointicker.ui.home
 
 import android.content.Intent
 import android.view.MenuItem
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -22,6 +23,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
         binding.mainBottomNavigation.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.detail_fragment) {
+                binding.mainBottomNavigation.visibility = View.GONE
+            } else {
+                binding.mainBottomNavigation.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun setUpViews() {

@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_remove_favorite"
+                android:src="@drawable/ic_favorite"
                 android:visibility="gone"
                 tools:ignore="ContentDescription"
                 tools:visibility="visible" />

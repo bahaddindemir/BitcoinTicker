@@ -73,13 +73,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         val refreshTime: String = refreshIntervalTime.toString()
         binding.refreshInterval.setText(refreshTime)
         binding.refreshInterval.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
 
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
 
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
@@ -97,20 +93,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                 }
                 Status.SUCCESS -> {
                     hideLoading()
-                    resource?.let {
-                        setDetails(it.data)
-
-                        coinDetailItem = it.data
-
-                        it.data?.image?.small?.run {
-                            toolbarCenterLogo(this)
-                        }
-                        it.data?.isFavorite?.run {
-                            isFavoriteCoin = this
-                            if (isFavoriteCoin) {
-                                binding.toolbar.add.setImageResource(R.drawable.ic_add_fovorite)
-                            }
-                        }
+                    resource.data?.let {
+                        handleCoinDetailDataOnSuccess(it)
                     }
 
                     val msg = Message.obtain()
@@ -189,18 +173,10 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         currentPrice?.run {
             val defaultCurrency = appPreferences.defaultCurrency
             val currentPriceStr: String = when (defaultCurrency) {
-                "TRY" -> {
-                    this.tryX.toString()
-                }
-                "USD" -> {
-                    this.usd.toString()
-                }
-                "ETH" -> {
-                    this.eth.toString()
-                }
-                else -> {
-                    this.btc.toString()
-                }
+                "TRY" -> this.tryX.toString()
+                "USD" -> this.usd.toString()
+                "ETH" -> this.eth.toString()
+                else -> this.btc.toString()
             }
             val combineString = "$currentPriceStr $defaultCurrency"
             binding.currentPrice.text = combineString
@@ -213,18 +189,10 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         priceChange24hInCurrency?.run {
             var priceChangePercentage24hInStr = ""
             priceChangePercentage24hInStr = when (priceChangePercentage24hInStr) {
-                "TRY" -> {
-                    this.tryX.toString()
-                }
-                "USD" -> {
-                    this.usd.toString()
-                }
-                "ETH" -> {
-                    this.eth.toString()
-                }
-                else -> {
-                    this.btc.toString()
-                }
+                "TRY" -> this.tryX.toString()
+                "USD" -> this.usd.toString()
+                "ETH" -> this.eth.toString()
+                else -> this.btc.toString()
             }
             val combineString = "$priceChangePercentage24hInStr %"
             binding.priceChangePercentage24h.text = combineString
@@ -275,6 +243,22 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         return df.format(c)
     }
 
+    private fun handleCoinDetailDataOnSuccess(coinDetailItem: CoinDetailItem) {
+        setDetails(coinDetailItem)
+
+        this.coinDetailItem = coinDetailItem
+
+        coinDetailItem.image?.small?.run {
+            toolbarCenterLogo(this)
+        }
+        coinDetailItem.isFavorite?.run {
+            isFavoriteCoin = this
+            if (isFavoriteCoin) {
+                binding.toolbar.add.setImageResource(R.drawable.ic_add_fovorite)
+            }
+        }
+    }
+
     private fun handleFavoriteButton() {
         if (isFavoriteCoin) {
             binding.toolbar.add.setImageResource(R.drawable.ic_favorite)
@@ -282,5 +266,10 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
             binding.toolbar.add.setImageResource(R.drawable.ic_add_fovorite)
         }
         isFavoriteCoin = !isFavoriteCoin
+
+        coinDetailItem?.run {
+            this.isFavorite = isFavoriteCoin
+            viewModel.updateFavoriteCoinDetail(this)
+        }
     }
 }

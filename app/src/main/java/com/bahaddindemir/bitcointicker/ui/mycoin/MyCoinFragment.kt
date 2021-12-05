@@ -6,7 +6,6 @@ import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.databinding.FragmentMyCoinBinding
 import com.bahaddindemir.bitcointicker.ui.adapter.MyCoinAdapter
-import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
 import com.bahaddindemir.bitcointicker.ui.base.BaseFragment
 import com.bahaddindemir.bitcointicker.ui.viewholder.MyCoinViewHolder
 import dagger.hilt.android.AndroidEntryPoint

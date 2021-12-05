@@ -56,5 +56,8 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
         disposables.add(disposable)
     }
 
+    fun updateFavoriteCoinDetail(coinDetailItem: CoinDetailItem) =
+        coinRepository.updateFavoriteCoin(coinDetailItem)
+
     fun postCoinDetailId(coinItemId: String) = this.coinItem.postValue(coinItemId)
 }

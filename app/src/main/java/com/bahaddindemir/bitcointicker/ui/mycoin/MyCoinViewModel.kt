@@ -2,7 +2,6 @@ package com.bahaddindemir.bitcointicker.ui.mycoin
 
 import androidx.lifecycle.*
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
-import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
 import com.bahaddindemir.bitcointicker.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -13,6 +13,7 @@ import com.bahaddindemir.bitcointicker.data.services.ApiService
 import com.bahaddindemir.bitcointicker.data.services.FireStoreSource
 import com.bahaddindemir.bitcointicker.util.AppPreferences
 import com.google.firebase.auth.FirebaseUser
+import io.reactivex.rxjava3.core.Completable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -33,7 +34,8 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
             return@withContext object : NetworkBoundRepository<CoinDetailItem, CoinDetailItem>() {
                 override fun saveFetchData(items: CoinDetailItem) {
                     items.let {
-                        coinDao.updateCoinDetail(it)
+                        // Open this line when you fetch favorite coin data from Firestore
+                        //coinDao.updateCoinDetail(it)
                     }
                 }
 
@@ -90,19 +92,19 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
             }.asLiveData()
         }
 
-    override fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>> = coinDao.getFavoriteCoins()
+    override suspend fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>> = coinDao.getFavoriteCoins()
 
-    override fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
-        fireStore.addCoinToFavorite(firebaseUser, coinDetailItem)
+    override fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem):
+            Completable = fireStore.addCoinToFavorite(firebaseUser, coinDetailItem)
 
-    override fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
-        fireStore.deleteFavoriteCoin(firebaseUser, coinDetailItem)
+    override fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem):
+            Completable = fireStore.deleteFavoriteCoin(firebaseUser, coinDetailItem)
 
     override fun updateFavoriteCoin(coinDetailItem: CoinDetailItem) {
         coinDao.updateCoinDetail(coinDetailItem)
     }
 
-    //ToDo: Implement get favorites
+    //ToDo: Implement get favorites from Firestore
     //fun getMyFavoriteCoinList(firebaseUser: FirebaseUser) = fireStore.getMyCoinFavoriteList(firebaseUser)
 
     override fun getCoinList() = coinDao.getCoins()

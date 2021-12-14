@@ -16,14 +16,6 @@
             android:id="@+id/toolbar"
             layout="@layout/view_toolbar_only" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Coming Soon"
-            android:textColor="@color/white"
-            android:textSize="34sp"
-            android:gravity="center" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/myCoinsRecyclerview"
             android:layout_width="match_parent"

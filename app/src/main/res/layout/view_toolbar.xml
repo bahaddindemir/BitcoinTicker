@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
@@ -51,7 +52,6 @@
                 android:layout_centerVertical="true"
                 android:padding="8dp"
                 android:src="@drawable/ic_close" />
-
         </RelativeLayout>
 
 
@@ -94,7 +94,6 @@
                     android:visibility="gone"
                     tools:ignore="ContentDescription"
                     tools:visibility="gone" />
-
             </RelativeLayout>
 
             <LinearLayout
@@ -121,7 +120,6 @@
                     android:text="@string/app_name"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
-
             </LinearLayout>
 
             <RelativeLayout

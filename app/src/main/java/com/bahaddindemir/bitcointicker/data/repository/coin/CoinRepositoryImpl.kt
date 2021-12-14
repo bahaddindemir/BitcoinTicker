@@ -78,7 +78,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     val map = HashMap<String, Any>()
                     val defaultCurrency = appPreferences.defaultCurrency
                     defaultCurrency?.let { map[vsCurrency] = it.lowercase(Locale.ROOT) }
-                    map[order] = "market_cap_desc"
+                    map[order] = order
                     map[pageMap] = page
                     map[perPage] = "20"
                     map[sparkline] = false

@@ -16,9 +16,7 @@ class MyCoinViewModel @Inject constructor(private val coinRepository: CoinReposi
         }
     }
 
-    private var coinDetailItem: MutableLiveData<String> = MutableLiveData()
-    var coinLiveData: LiveData<List<CoinDetailItem>> =
-        this.coinDetailItem.switchMap {
-            launchOnViewModelScope { this.coinRepository.loadFavoriteCoins() }
-        }
+    var coinLiveData: LiveData<List<CoinDetailItem>> = launchOnViewModelScope {
+        this.coinRepository.loadFavoriteCoins()
+    }
 }

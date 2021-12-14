@@ -8,7 +8,11 @@
         <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/drawable/ic_main.xml" value="0.215625" />
         <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/drawable/splash_background.xml" value="0.215625" />
         <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/fragment_detail.xml" value="0.21467391304347827" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/fragment_my_coin.xml" value="0.20833333333333334" />
         <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/item_coin.xml" value="0.21467391304347827" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/item_my_coin.xml" value="0.19947916666666668" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/view_toolbar.xml" value="0.19947916666666668" />
+        <entry key="..\:/dev/Android/BitcoinTicker2/app/src/main/res/layout/view_toolbar_only.xml" value="0.19947916666666668" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/drawable/bg_search.xml" value="0.13072916666666667" />
         <entry key="app/src/main/res/drawable/bottom_menu.xml" value="0.13072916666666667" />
@@ -22,7 +26,6 @@
         <entry key="app/src/main/res/drawable/ic_fg.xml" value="0.246875" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.13072916666666667" />
         <entry key="app/src/main/res/drawable/ic_notification.xml" value="0.246875" />
-        <entry key="app/src/main/res/drawable/ic_remove_favorite.xml" value="0.246875" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.246875" />
         <entry key="app/src/main/res/drawable/splash_background.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.12239583333333333" />
@@ -35,16 +38,15 @@
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2231796049869435" />
         <entry key="app/src/main/res/layout/fragment_intro.xml" value="0.31726283048211507" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_my_coin.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_my_coin.xml" value="0.1487364418009396" />
         <entry key="app/src/main/res/layout/fragment_my_coins.xml" value="0.11458333333333333" />
         <entry key="app/src/main/res/layout/fragment_signup.xml" value="0.1834709353840751" />
         <entry key="app/src/main/res/layout/fragment_tutorial.xml" value="0.12239583333333333" />
-        <entry key="app/src/main/res/layout/item_coin.xml" value="0.14045185651055592" />
-        <entry key="app/src/main/res/layout/item_my_coin.xml" value="0.16065720619719914" />
+        <entry key="app/src/main/res/layout/item_coin.xml" value="0.3975093195805463" />
         <entry key="app/src/main/res/layout/item_my_coins.xml" value="0.3408317630726639" />
         <entry key="app/src/main/res/layout/progress_dialog.xml" value="0.165" />
         <entry key="app/src/main/res/layout/view_toolbar.xml" value="0.43299331169627664" />
-        <entry key="app/src/main/res/layout/view_toolbar_only.xml" value="0.2960809803488145" />
+        <entry key="app/src/main/res/layout/view_toolbar_only.xml" value="0.17740802005147915" />
         <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.23928633366791466" />
       </map>
     </option>

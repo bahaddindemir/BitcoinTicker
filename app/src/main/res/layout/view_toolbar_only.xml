@@ -2,60 +2,22 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/splash"
-        android:paddingTop="8dp">
+        android:layout_marginBottom="16dp"
+        android:gravity="center">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/right_container"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="8dp"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:textAlignment="center"
-                tools:text="@string/title" />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/right_container"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true">
-
-            <ImageView
-                android:id="@+id/search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_search"
-                android:visibility="gone"
-                tools:ignore="ContentDescription"
-                tools:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_favorite"
-                android:visibility="gone"
-                tools:ignore="ContentDescription"
-                tools:visibility="visible" />
-        </RelativeLayout>
-    </RelativeLayout>
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/my_coins_fragment"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            tools:text="@string/title" />
+    </LinearLayout>
 </layout>

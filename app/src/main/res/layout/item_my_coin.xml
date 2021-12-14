@@ -12,7 +12,6 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
         android:orientation="vertical"
         app:cardBackgroundColor="@color/splash_accent"
         app:cardCornerRadius="8dp"
@@ -26,8 +25,8 @@
             <ImageView
                 android:id="@+id/coinImage"
                 bindingCoinImageUrl="@{coinDetailItem.image.small}"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center" />
 
             <TextView
@@ -38,7 +37,7 @@
                 android:gravity="center"
                 android:text="@{coinDetailItem.name}"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 tools:text="Bitcoin" />
         </LinearLayout>
 

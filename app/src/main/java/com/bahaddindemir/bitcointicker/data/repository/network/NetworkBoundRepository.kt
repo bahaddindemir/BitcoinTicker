@@ -24,7 +24,7 @@ internal constructor() {
                 result.postValue(CoinResource.loading(null, null))
                 fetchFromNetwork(loadFromDb())
             } else {
-                result.addSource<ResultType>(loadedFromDb) { newData ->
+                result.addSource(loadedFromDb) { newData ->
                     setValue(
                         CoinResource.success(
                             newData,
@@ -58,7 +58,7 @@ internal constructor() {
                         result.removeSource(loadedFromDB)
                         onFetchFailed(response.envelope)
                         response.envelope?.let {
-                            result.addSource<ResultType>(loadedFromDB) { newData ->
+                            result.addSource(loadedFromDB) { newData ->
                                 setValue(
                                     CoinResource.error(it.message, newData)
                                 )

@@ -34,13 +34,12 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
             return@withContext object : NetworkBoundRepository<CoinDetailItem, CoinDetailItem>() {
                 override fun saveFetchData(items: CoinDetailItem) {
                     items.let {
-                        // Open this line when you fetch favorite coin data from Firestore
-                        //coinDao.updateCoinDetail(it)
+                        coinDao.updateCoinDetail(it)
                     }
                 }
 
                 override fun shouldFetch(data: CoinDetailItem?): Boolean {
-                    return true
+                    return data == null
                 }
 
                 override fun loadFromDb(): LiveData<CoinDetailItem> {

@@ -1,12 +1,10 @@
 package com.bahaddindemir.bitcointicker.util
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.provider.Settings
 import android.util.Patterns
 import android.view.View
 import android.widget.ImageView
@@ -55,11 +53,6 @@ fun setImageWithGlide(view: ImageView, imageUrl: String?) {
     Glide.with(view.context)
         .load(imageUrl)
         .into(view)
-}
-
-@SuppressLint("HardwareIds")
-fun getDeviceId(context: Context): String {
-    return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
 }
 
 // Todo: Make a choose for email validation

@@ -13,9 +13,6 @@ import com.bahaddindemir.bitcointicker.R
 import com.readystatesoftware.chuck.internal.ui.MainActivity
 
 class BackgroundRefreshService : Service() {
-    override fun onCreate() {
-        super.onCreate()
-    }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val isStart = intent.getBooleanExtra("isStart", false)
@@ -41,9 +38,5 @@ class BackgroundRefreshService : Service() {
     @Nullable
     override fun onBind(intent: Intent?): IBinder? {
         return null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

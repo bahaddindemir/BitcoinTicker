@@ -17,8 +17,7 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
     value = [
         (CoinPriceConverter::class),
         (CoinLocalizationConverter::class),
-        (CoinImageConverter::class),
-        (PriceChange24hInCurrencyConverter::class)
+        (CoinImageConverter::class)
     ]
 )
 

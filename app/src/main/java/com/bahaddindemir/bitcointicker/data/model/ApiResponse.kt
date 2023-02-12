@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 class ApiResponse<T> {
     val code: Int
     val body: T?
-    var links: MutableMap<String, String>
+    private var links: MutableMap<String, String>
     private val gson: Gson
     val envelope: Envelope?
 
@@ -25,11 +25,11 @@ class ApiResponse<T> {
             if (!matcher.find() || matcher.groupCount() != 1) {
                 return null
             }
-            try {
-                return Integer.parseInt(matcher.group(1) ?: "")
+            return try {
+                Integer.parseInt(matcher.group(1) ?: "")
             } catch (ex: NumberFormatException) {
                 Log.w(this.toString(), ex.message!!)
-                return null
+                null
             }
         }
 
@@ -69,7 +69,7 @@ class ApiResponse<T> {
             body = null
         }
 
-        val linkHeader = response.headers().get("link")
+        val linkHeader = response.headers()["link"]
         linkHeader?.let {
             links = ArrayMap()
             val matcher = LINK_PATTERN.matcher(linkHeader)
@@ -77,7 +77,7 @@ class ApiResponse<T> {
                 if (matcher.groupCount() == 2) {
                     matcher.group(2)?.let {
                         matcher.group(1)?.apply {
-                            links.put(it, this)
+                            links[it] = this
                         }
                     }
                 }

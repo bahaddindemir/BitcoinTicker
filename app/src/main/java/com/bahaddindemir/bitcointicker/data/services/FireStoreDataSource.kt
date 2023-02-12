@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class FireStoreSource @Inject constructor() {
     private val firebaseStore = FirebaseFirestore.getInstance()
 
-    fun addCoinToFavorite(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
+    fun addCoinToFavorite(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem): Completable =
         Completable.create { emitter -> val documentFavorite =
             firebaseStore.collection(coinCollectionName).document(firebaseUser.uid)
 
@@ -21,17 +21,17 @@ class FireStoreSource @Inject constructor() {
             saveDataParam[coinDetail] = coinDetailItem
             if (!emitter.isDisposed) {
                 collectionMyFavorite.document()
-                    .set(saveDataParam)
-                    .addOnSuccessListener {
-                        emitter.onComplete()
-                    }
-                    .addOnFailureListener {
-                        emitter.onError(it)
-                    }
+                                    .set(saveDataParam)
+                                    .addOnSuccessListener {
+                                        emitter.onComplete()
+                                    }
+                                    .addOnFailureListener {
+                                        emitter.onError(it)
+                                    }
             }
         }
 
-    fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
+    fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem): Completable =
         Completable.create { emitter -> val documentFavorite =
             firebaseStore.collection(coinCollectionName).document(firebaseUser.uid)
 
@@ -39,13 +39,13 @@ class FireStoreSource @Inject constructor() {
 
             if (!emitter.isDisposed) {
                 collectionMyFavorite.document()
-                    .delete()
-                    .addOnSuccessListener {
-                        emitter.onComplete()
-                    }
-                    .addOnFailureListener {
-                        emitter.onError(it)
-                    }
+                                    .delete()
+                                    .addOnSuccessListener {
+                                        emitter.onComplete()
+                                    }
+                                    .addOnFailureListener {
+                                        emitter.onError(it)
+                                    }
             }
         }
 

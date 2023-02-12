@@ -24,11 +24,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     private val viewModel: DetailViewModel by viewModels()
-    private val authViewMode : AuthViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     private lateinit var coinItem: CoinItem
-    private var coinDetailItem: CoinDetailItem? = null
-    private var refreshIntervalTime: Long = 2000L
+    private          var coinDetailItem: CoinDetailItem? = null
+    private          var refreshIntervalTime: Long = 2000L
 
     private var isFavoriteCoin = false
 
@@ -86,7 +86,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     }
 
     private fun observeCoinDetailData() {
-        viewModel.coinDetailLiveData.observe(viewLifecycleOwner, { resource ->
+        viewModel.coinDetailLiveData.observe(viewLifecycleOwner) { resource ->
             when (resource.status) {
                 Status.LOADING -> {
                     showLoading()
@@ -106,7 +106,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                     showError(getString(R.string.some_error))
                 }
             }
-        })
+        }
     }
 
     private fun setClickListeners() {
@@ -121,7 +121,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         }
         binding.toolbar.add.setOnClickListener {
             coinDetailItem?.run {
-                authViewMode.user?.let { fireBaseUser ->
+                authViewModel.user?.let { fireBaseUser ->
                     if (!isFavoriteCoin) {
                         viewModel.onAddFavoriteFireStore(fireBaseUser, this)
                     } else {

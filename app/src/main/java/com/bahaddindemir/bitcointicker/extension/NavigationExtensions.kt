@@ -184,8 +184,8 @@ private fun detachNavHostFragment(
     navHostFragment: NavHostFragment
 ) {
     fragmentManager.beginTransaction()
-        .detach(navHostFragment)
-        .commitNow()
+                   .detach(navHostFragment)
+                   .commitNow()
 }
 
 private fun attachNavHostFragment(
@@ -216,8 +216,8 @@ private fun obtainNavHostFragment(
     // Otherwise, create it and return it.
     val navHostFragment = NavHostFragment.create(navGraphId)
     fragmentManager.beginTransaction()
-        .add(containerId, navHostFragment, fragmentTag)
-        .commitNow()
+                   .add(containerId, navHostFragment, fragmentTag)
+                   .commitNow()
     return navHostFragment
 }
 

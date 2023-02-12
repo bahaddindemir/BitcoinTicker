@@ -51,17 +51,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
             override fun afterTextChanged(s: Editable?) {
                 val searchKey: String = s.toString().trim()
                 if (searchKey.isNotEmpty()) {
-                    searchCoinsMarkets(searchKey).observe(viewLifecycleOwner, {
+                    searchCoinsMarkets(searchKey).observe(viewLifecycleOwner) {
                         it?.run {
                             coinAdapter.setData(this)
                         }
-                    })
+                    }
                 } else {
-                    searchFullCoinsMarkets().observe(viewLifecycleOwner, {
+                    searchFullCoinsMarkets().observe(viewLifecycleOwner) {
                         it?.run {
                             coinAdapter.setData(this)
                         }
-                    })
+                    }
                 }
             }
         })
@@ -92,7 +92,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
     }
 
     private fun observeCoinsMarketsResource() {
-        viewModel.coinLiveData.observe(viewLifecycleOwner, { resource ->
+        viewModel.coinLiveData.observe(viewLifecycleOwner) { resource ->
             when (resource.status) {
                 Status.LOADING -> {
                     showLoading()
@@ -109,7 +109,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
                     showError(getString(R.string.some_error))
                 }
             }
-        })
+        }
     }
 
     private fun searchCoinsMarkets(searchKey: String): LiveData<List<CoinItem>> {

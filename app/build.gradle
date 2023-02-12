@@ -96,7 +96,6 @@ dependencies {
     implementation Libraries.lifeCycleView
     implementation Libraries.lifeCycleLive
 
-
     // FireStore
     implementation Libraries.fireStore
     implementation Libraries.hawk

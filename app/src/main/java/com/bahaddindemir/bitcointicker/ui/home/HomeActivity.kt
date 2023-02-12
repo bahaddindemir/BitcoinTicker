@@ -43,7 +43,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return item.onNavDestinationSelected(findNavController(R.id.fragmentContainerView))  ||
+        return item.onNavDestinationSelected(findNavController(R.id.fragmentContainerView)) ||
                 super.onOptionsItemSelected(item)
     }
 

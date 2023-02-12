@@ -25,12 +25,7 @@ internal constructor() {
                 fetchFromNetwork(loadFromDb())
             } else {
                 result.addSource(loadedFromDb) { newData ->
-                    setValue(
-                        CoinResource.success(
-                            newData,
-                            1
-                        )
-                    )
+                    setValue(CoinResource.success(newData, 1))
                 }
             }
         }
@@ -59,9 +54,7 @@ internal constructor() {
                         onFetchFailed(response.envelope)
                         response.envelope?.let {
                             result.addSource(loadedFromDB) { newData ->
-                                setValue(
-                                    CoinResource.error(it.message, newData)
-                                )
+                                setValue(CoinResource.error(it.message, newData))
                             }
                         }
                     }

@@ -15,7 +15,7 @@ import com.bahaddindemir.bitcointicker.R
 
 fun showMessage(context: Context, message: String?) {
     Toast.makeText(context, message ?: context.resources.getString(R.string.some_error), Toast.LENGTH_SHORT)
-        .show()
+         .show()
 }
 
 fun showLoadingDialog(activity: Activity?, hint: String?): Dialog? {
@@ -29,7 +29,7 @@ fun showLoadingDialog(activity: Activity?, hint: String?): Dialog? {
     }
     progressDialog.setContentView(R.layout.progress_dialog)
     val tvHint = progressDialog.findViewById<TextView>(R.id.tv_hint)
-    if (hint != null && !hint.isEmpty()) {
+    if (hint != null && hint.isNotEmpty()) {
         tvHint.visibility = View.VISIBLE
         tvHint.text = hint
     } else {
@@ -51,8 +51,8 @@ fun hideLoadingDialog(mProgressDialog: Dialog?, activity: Activity?) {
 
 fun setImageWithGlide(view: ImageView, imageUrl: String?) {
     Glide.with(view.context)
-        .load(imageUrl)
-        .into(view)
+         .load(imageUrl)
+         .into(view)
 }
 
 // Todo: Make a choose for email validation

@@ -35,7 +35,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 
         viewModel.failResponse.observe(this) {
             hideLoading()
-            // ToDo: There is a bug about snackBar
+            // ToDo: There is a bug on snackBar
             //requireView().showSnackBar(resources.getString(R.string.some_error))
         }
 

@@ -34,25 +34,25 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
 
     fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
         val disposable = coinRepository.addFavoriteCoin(firebaseUser, coinDetailItem)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                successResponse.call()
-            }, {
-                failResponse.call()
-            })
+                                       .subscribeOn(Schedulers.io())
+                                       .observeOn(AndroidSchedulers.mainThread())
+                                       .subscribe({
+                                           successResponse.call()
+                                       }, {
+                                           failResponse.call()
+                                       })
         disposables.add(disposable)
     }
 
     fun onDeleteFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
         val disposable = coinRepository.deleteFavoriteCoin(firebaseUser, coinDetailItem)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                successResponse.call()
-            }, {
-                failResponse.call()
-            })
+                                       .subscribeOn(Schedulers.io())
+                                       .observeOn(AndroidSchedulers.mainThread())
+                                       .subscribe({
+                                           successResponse.call()
+                                       }, {
+                                           failResponse.call()
+                                       })
         disposables.add(disposable)
     }
 

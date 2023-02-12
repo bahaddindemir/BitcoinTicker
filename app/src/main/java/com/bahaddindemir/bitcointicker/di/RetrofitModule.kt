@@ -28,10 +28,11 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .addCallAdapterFactory(LiveDataCallAdapterFactory())
-        .baseUrl(BuildConfig.API_BASE_URL)
-        .build()
+    fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(LiveDataCallAdapterFactory())
+                .baseUrl(BuildConfig.API_BASE_URL)
+                .build()
 }

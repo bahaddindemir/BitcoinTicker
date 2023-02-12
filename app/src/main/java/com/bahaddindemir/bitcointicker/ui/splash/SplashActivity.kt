@@ -24,7 +24,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             val targetActivity = if (viewModel.isFirstTime()) {
                 //IntroActivity::class.java
                 AuthActivity::class.java
-            } else if (viewModel.isLoggedIn()){
+            } else if (viewModel.isLoggedIn()) {
                 HomeActivity::class.java
             } else {
                 AuthActivity::class.java

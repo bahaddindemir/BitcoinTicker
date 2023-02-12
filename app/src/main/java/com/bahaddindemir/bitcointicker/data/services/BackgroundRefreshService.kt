@@ -6,7 +6,6 @@ import android.app.Notification
 import androidx.core.app.NotificationCompat
 import android.app.PendingIntent
 import android.app.Service
-import androidx.annotation.Nullable
 import com.bahaddindemir.bitcointicker.BitcoinTickerApplication.Companion.CHANNEL_ID
 import com.bahaddindemir.bitcointicker.BuildConfig
 import com.bahaddindemir.bitcointicker.R
@@ -18,13 +17,12 @@ class BackgroundRefreshService : Service() {
         val isStart = intent.getBooleanExtra("isStart", false)
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this,
-            0, notificationIntent, 0
+            this, 0, notificationIntent, 0
         )
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Background refresh service working")
-            .setSmallIcon(R.drawable.ic_fg)
-            .build()
+                                                           .setContentTitle("Background refresh service working")
+                                                           .setSmallIcon(R.drawable.ic_fg)
+                                                           .build()
         if (isStart) {
             if (BuildConfig.DEBUG) {
                 startForeground(1, notification)
@@ -35,7 +33,6 @@ class BackgroundRefreshService : Service() {
         return START_NOT_STICKY
     }
 
-    @Nullable
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }

@@ -20,11 +20,11 @@ object NetworkServicesModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(RequestInterceptor())
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .build()
+                           .addInterceptor(RequestInterceptor())
+                           .readTimeout(30, TimeUnit.SECONDS)
+                           .writeTimeout(30, TimeUnit.SECONDS)
+                           .connectTimeout(30, TimeUnit.SECONDS)
+                           .build()
     }
 
     @Provides

@@ -2,16 +2,17 @@ package com.bahaddindemir.bitcointicker.data.local
 
 import androidx.room.TypeConverter
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinLocalization
-import com.google.gson.Gson
+import com.bahaddindemir.bitcointicker.extension.toJsonModel
+import com.bahaddindemir.bitcointicker.extension.toJsonString
 
 class CoinLocalizationConverter {
     @TypeConverter
-    fun stringToDescription(value: String): CoinLocalization? {
-        return Gson().fromJson(value, CoinLocalization::class.java)
+    fun stringToDescription(value: String): CoinLocalization {
+        return value.toJsonModel(CoinLocalization::class.java)
     }
 
     @TypeConverter
-    fun descriptionToString(description: CoinLocalization?): String {
-        return Gson().toJson(description)
+    fun descriptionToString(description: CoinLocalization): String {
+        return description.toJsonString()
     }
 }

@@ -19,11 +19,6 @@ fun bindingCoinImageUrl(imageView: ImageView, path: String?) {
     }
 }
 
-@BindingAdapter("bindingFloatToText")
-fun bindingFloatToText(textView: TextView, value: Float) {
-    textView.text = value.toString()
-}
-
 @BindingAdapter("bindingPriceChangePercentage24hToText")
 fun bindingPriceChangePercentage24hToText(textView: TextView, value: Float) {
     val price24HPercentageValue: String = value.toString()
@@ -58,9 +53,4 @@ fun bindingMarketCapToText(textView: TextView, value: Float) {
         }
     }
     textView.text = combineString
-}
-
-@BindingAdapter("bindingIntToText")
-fun bindingIntToText(textView: TextView, value: Int) {
-    textView.text = value.toString()
 }

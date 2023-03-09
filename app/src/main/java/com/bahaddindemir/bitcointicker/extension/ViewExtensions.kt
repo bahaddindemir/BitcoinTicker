@@ -56,7 +56,7 @@ fun View.disable() {
 fun View.showSnackBar(message: String, retryActionName: String? = null, action: (() -> Unit)? = null) {
     val snackBar = Snackbar.make(this, message, Snackbar.LENGTH_LONG)
 
-    val view: View = snackBar.getView()
+    val view: View = snackBar.view
     val params = view.layoutParams as FrameLayout.LayoutParams
     params.gravity = Gravity.TOP
     view.layoutParams = params

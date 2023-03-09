@@ -1,9 +1,9 @@
 package com.bahaddindemir.bitcointicker.ui.auth
 
 import android.util.Log
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bahaddindemir.bitcointicker.data.model.AuthRequest
-import com.bahaddindemir.bitcointicker.ui.base.BaseViewModel
 import com.bahaddindemir.bitcointicker.util.AuthUseCase
 import com.bahaddindemir.bitcointicker.data.model.Resource
 import com.bahaddindemir.bitcointicker.data.repository.auth.AuthRepository
@@ -22,7 +22,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
                                         private val authRepository: AuthRepository,
-                                        private val appPreferences: AppPreferences) : BaseViewModel()
+                                        private val appPreferences: AppPreferences) : ViewModel()
 {
     var request = AuthRequest()
     private val _authResponse = MutableStateFlow<Any>(Resource.Default)
@@ -56,30 +56,30 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     private fun login() {
         disposable.add(
             authRepository.login(request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    appPreferences.isLoggedIn = true
-                    successResponse.call()
-                }, {
-                    failResponse.call()
-                    Log.w(this.toString(), it.message!!)
-                })
+                          .subscribeOn(Schedulers.io())
+                          .observeOn(AndroidSchedulers.mainThread())
+                          .subscribe({
+                              appPreferences.isLoggedIn = true
+                              successResponse.call()
+                          }, {
+                              failResponse.call()
+                              Log.w(this.toString(), it.message!!)
+                          })
         )
     }
 
     private fun signup() {
         disposable.add(
             authRepository.register(request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    appPreferences.isLoggedIn = true
-                    successResponse.call()
-                }, {
-                    failResponse.call()
-                    Log.w(this.toString(), it.message!!)
-                })
+                          .subscribeOn(Schedulers.io())
+                          .observeOn(AndroidSchedulers.mainThread())
+                          .subscribe({
+                              appPreferences.isLoggedIn = true
+                              successResponse.call()
+                          }, {
+                              failResponse.call()
+                              Log.w(this.toString(), it.message!!)
+                          })
         )
     }
 

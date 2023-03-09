@@ -88,6 +88,6 @@ class ApiResponse<T> {
     companion object {
         private val LINK_PATTERN = Pattern.compile("<([^>]*)>[\\s]*;[\\s]*rel=\"([a-zA-Z0-9]+)\"")
         private val PAGE_PATTERN = Pattern.compile("\\bpage=(\\d+)")
-        private val NEXT_LINK = "next"
+        private const val NEXT_LINK = "next"
     }
 }

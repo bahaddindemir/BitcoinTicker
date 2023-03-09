@@ -55,15 +55,4 @@ fun setImageWithGlide(view: ImageView, imageUrl: String?) {
          .into(view)
 }
 
-// Todo: Make a choose for email validation
-fun String.isEmailValid(): Boolean = Patterns.EMAIL_ADDRESS.matcher(this).matches()
-
-fun String.isValidEmail() = Regex(
-    "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-            "\\@" +
-            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-            "(" +
-            "\\." +
-            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-            ")+"
-).matches(this)
+fun String.isValidEmail(): Boolean = Patterns.EMAIL_ADDRESS.matcher(this).matches()

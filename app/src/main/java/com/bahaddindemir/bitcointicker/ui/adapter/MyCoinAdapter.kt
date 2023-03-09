@@ -1,38 +1,32 @@
 package com.bahaddindemir.bitcointicker.ui.adapter
 
-import android.annotation.SuppressLint
-import android.view.View
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
+import com.bahaddindemir.bitcointicker.databinding.ItemMyCoinBinding
 import com.bahaddindemir.bitcointicker.ui.base.BaseAdapter
-import com.bahaddindemir.bitcointicker.ui.base.BaseViewHolder
 import com.bahaddindemir.bitcointicker.ui.viewholder.MyCoinViewHolder
-import com.bahaddindemir.bitcointicker.util.SectionRow
 
-class MyCoinAdapter(private val delegate: MyCoinViewHolder.Delegate) : BaseAdapter() {
-    init {
-        addSection(ArrayList<CoinDetailItem>())
+class MyCoinAdapter(private val delegate: MyCoinViewHolder.Delegate) : BaseAdapter<CoinDetailItem>() {
+    override fun getLayoutId(position: Int, obj: CoinDetailItem): Int {
+        return R.layout.item_my_coin
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    override fun getViewHolder(binding: ViewBinding): RecyclerView.ViewHolder {
+        return when (binding) {
+            is ItemMyCoinBinding -> MyCoinViewHolder(binding, delegate)
+            else -> throw IllegalArgumentException("Unknown ViewBinding")
+        }
+    }
+
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Int) -> ViewBinding
+        get() =
+            { inflater, parent, _ -> ItemMyCoinBinding.inflate(inflater, parent, false) }
+
     fun addCurrencyItemList(resource: List<CoinDetailItem>?) {
-        resource?.let {
-            sections()[0].addAll(it)
-            notifyDataSetChanged()
-        }
+        resource?.let { setItems(it) }
     }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setData(currencyList: List<CoinDetailItem>?) {
-        currencyList?.let {
-            sections()[0].clear()
-            sections()[0].addAll(it)
-            notifyDataSetChanged()
-        }
-    }
-
-    override fun layout(sectionRow: SectionRow): Int = R.layout.item_my_coin
-
-    override fun viewHolder(layout: Int, view: View): BaseViewHolder =
-        MyCoinViewHolder(view, delegate)
 }

@@ -1,35 +1,23 @@
 package com.bahaddindemir.bitcointicker.ui.viewholder
 
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.databinding.ItemMyCoinBinding
-import com.bahaddindemir.bitcointicker.ui.base.BaseViewHolder
-import com.bahaddindemir.bitcointicker.util.bindings
+import com.bahaddindemir.bitcointicker.ui.base.BaseAdapter
 
-class MyCoinViewHolder(view: View, private val delegate: Delegate) : BaseViewHolder(view) {
+class MyCoinViewHolder(private val binding: ItemMyCoinBinding, private val delegate: Delegate) :
+    RecyclerView.ViewHolder(binding.root), BaseAdapter.Binder<CoinDetailItem> {
     interface Delegate {
         fun onItemClick(coinDetailItem: CoinDetailItem, view: View)
     }
 
-    private lateinit var coinDetailItem: CoinDetailItem
-    private val binding by bindings<ItemMyCoinBinding>(view)
-
-    override fun bindData(data: Any) {
-        if (data is CoinDetailItem) {
+    override fun bind(data: CoinDetailItem) {
+        binding.apply {
             coinDetailItem = data
-
-            binding.apply {
-                coinDetailItem = data
-                executePendingBindings()
-            }
+            executePendingBindings()
         }
-    }
 
-    override fun onClick(view: View?) {
-        view?.let {
-            delegate.onItemClick(coinDetailItem, view)
-        }
+        itemView.setOnClickListener { delegate.onItemClick(data, view = it) }
     }
-
-    override fun onLongClick(v: View?): Boolean = false
 }

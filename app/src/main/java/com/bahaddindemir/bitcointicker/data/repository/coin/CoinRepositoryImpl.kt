@@ -66,7 +66,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 }
 
                 override fun shouldFetch(data: List<CoinItem>?): Boolean {
-                    return data == null || data.isEmpty()
+                    return data.isNullOrEmpty()
                 }
 
                 override fun loadFromDb(): LiveData<List<CoinItem>> {

@@ -13,9 +13,9 @@ import com.bahaddindemir.bitcointicker.util.SharedPreferenceHelper
 fun bindingCoinImageUrl(imageView: ImageView, path: String?) {
     path?.let {
         GlideApp.with(imageView.context)
-            .load(it)
-            .error(ContextCompat.getDrawable(imageView.context, R.drawable.ic_fg))
-            .into(imageView)
+                .load(it)
+                .error(ContextCompat.getDrawable(imageView.context, R.drawable.ic_fg))
+                .into(imageView)
     }
 }
 

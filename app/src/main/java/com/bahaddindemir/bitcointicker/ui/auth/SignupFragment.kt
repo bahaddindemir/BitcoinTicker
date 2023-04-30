@@ -1,19 +1,21 @@
 package com.bahaddindemir.bitcointicker.ui.auth
 
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bahaddindemir.bitcointicker.R
+import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
+import com.bahaddindemir.bitcointicker.data.model.Resource
 import com.bahaddindemir.bitcointicker.databinding.FragmentSignupBinding
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
 import com.bahaddindemir.bitcointicker.extension.openActivityAndClearStack
 import com.bahaddindemir.bitcointicker.extension.showSnackBar
-import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
-import com.bahaddindemir.bitcointicker.data.model.Resource
 import com.bahaddindemir.bitcointicker.ui.base.BaseFragment
 import com.bahaddindemir.bitcointicker.ui.home.HomeActivity
 import com.bahaddindemir.bitcointicker.util.showSoftInput
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SignupFragment : BaseFragment<FragmentSignupBinding>() {
@@ -59,12 +61,14 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
             }
         }
 
-        lifecycleScope.launchWhenResumed {
-            viewModel.authResponse.collect {
-                when (it) {
-                    Resource.Loading -> {
-                        hideKeyboard()
-                        showLoading()
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.authResponse.collect {
+                    when (it) {
+                        Resource.Loading -> {
+                            hideKeyboard()
+                            showLoading()
+                        }
                     }
                 }
             }

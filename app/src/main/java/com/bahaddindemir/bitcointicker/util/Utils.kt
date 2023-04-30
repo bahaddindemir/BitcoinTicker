@@ -29,7 +29,7 @@ fun showLoadingDialog(activity: Activity?, hint: String?): Dialog? {
     }
     progressDialog.setContentView(R.layout.progress_dialog)
     val tvHint = progressDialog.findViewById<TextView>(R.id.tv_hint)
-    if (hint != null && hint.isNotEmpty()) {
+    if (!hint.isNullOrEmpty()) {
         tvHint.visibility = View.VISIBLE
         tvHint.text = hint
     } else {

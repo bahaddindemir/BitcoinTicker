@@ -12,12 +12,13 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    namespace 'com.bahaddindemir.bitcointicker'
+    compileSdk Config.AppConfig.compileSdkVersion
 
     defaultConfig {
         applicationId Config.AppConfig.appId
         minSdk Config.AppConfig.minSdkVersion
-        targetSdk Config.AppConfig.compileSdkVersion
+        targetSdk Config.AppConfig.targetSdkVersion
         versionCode Config.AppConfig.versionCode
         versionName Config.AppConfig.versionName
 
@@ -42,11 +43,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 }
 

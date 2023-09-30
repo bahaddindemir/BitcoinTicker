@@ -17,7 +17,7 @@
         android:theme="@style/DefaultThemeNoActionBar">
 
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".ui.auth.AuthActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
@@ -27,15 +27,7 @@
         </activity>
 
         <activity
-            android:name=".ui.home.HomeActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.auth.AuthActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.intro.IntroActivity"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait" />
 
         <service android:name=".data.services.BackgroundRefreshService" />

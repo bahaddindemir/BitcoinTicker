@@ -29,9 +29,8 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     val authResponse = _authResponse
 
     val validationException = SingleLiveEvent<Int>()
-    val successResponse = SingleLiveEvent<Void>()
-    val failResponse = SingleLiveEvent<Void>()
-    val toSignupButton = SingleLiveEvent<Void>()
+    val successResponse = SingleLiveEvent<Boolean>()
+    val toSignupButton = SingleLiveEvent<Boolean>()
 
     private val disposable = CompositeDisposable()
 
@@ -50,7 +49,7 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     }
 
     fun onToSignupClicked() {
-        toSignupButton.call()
+        toSignupButton.value = true
     }
 
     private fun login() {
@@ -60,9 +59,9 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
                           .observeOn(AndroidSchedulers.mainThread())
                           .subscribe({
                               appPreferences.isLoggedIn = true
-                              successResponse.call()
+                              successResponse.value = true
                           }, {
-                              failResponse.call()
+                              successResponse.value = false
                               Log.w(this.toString(), it.message!!)
                           })
         )
@@ -75,9 +74,9 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
                           .observeOn(AndroidSchedulers.mainThread())
                           .subscribe({
                               appPreferences.isLoggedIn = true
-                              successResponse.call()
+                              successResponse.value = true
                           }, {
-                              failResponse.call()
+                              successResponse.value = false
                               Log.w(this.toString(), it.message!!)
                           })
         )

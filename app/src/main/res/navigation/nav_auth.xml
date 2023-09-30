@@ -3,7 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_auth"
-    app:startDestination="@id/login_fragment">
+    app:startDestination="@id/splash_fragment">
+
+    <fragment
+        android:id="@+id/splash_fragment"
+        android:name="com.bahaddindemir.bitcointicker.ui.splash.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/fragment_splash">
+
+        <action
+            android:id="@+id/action_splash_fragment_to_login_fragment"
+            app:destination="@id/login_fragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_home"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_splash_fragment_to_tutorial_fragment"
+            app:destination="@id/tutorial_fragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_home"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/login_fragment"
@@ -11,7 +36,7 @@
         tools:layout="@layout/fragment_login">
 
         <action
-            android:id="@+id/action_open_sign_up_fragment"
+            android:id="@+id/action_login_fragment_to_sign_up_fragment"
             app:destination="@id/signup_fragment"
             app:enterAnim="@anim/anim_slide_in_right"
             app:exitAnim="@anim/anim_slide_out_left"
@@ -23,4 +48,23 @@
         android:id="@+id/signup_fragment"
         android:name="com.bahaddindemir.bitcointicker.ui.auth.SignupFragment"
         tools:layout="@layout/fragment_signup" />
+
+    <fragment
+        android:id="@+id/tutorial_fragment"
+        android:name="com.bahaddindemir.bitcointicker.ui.intro.tutorial.TutorialFragment"
+        tools:layout="@layout/fragment_tutorial">
+
+        <action
+            android:id="@+id/action_tutorial_fragment_to_intro_fragment"
+            app:destination="@id/intro_fragment"
+            app:enterAnim="@anim/anim_slide_in_top"
+            app:exitAnim="@anim/anim_slide_out_bottom"
+            app:popEnterAnim="@anim/anim_slide_in_bottom"
+            app:popExitAnim="@anim/anim_slide_out_top" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/intro_fragment"
+        android:name="com.bahaddindemir.bitcointicker.ui.intro.intro.IntroFragment"
+        tools:layout="@layout/fragment_intro" />
 </navigation>

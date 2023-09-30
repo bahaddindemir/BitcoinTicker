@@ -1,8 +1,10 @@
 package com.bahaddindemir.bitcointicker.ui.home
 
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -25,6 +27,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
     private var coinAdapter = CoinAdapter(this)
 
     override fun getLayoutId() = R.layout.fragment_home
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.toolbar.searchView.visibility == View.VISIBLE) {
+                    binding.toolbar.closeBtn.performClick()
+                } else {
+                    isEnabled = false
+                    activity?.onBackPressed()
+                }
+            }
+        })
+    }
 
     override fun setBindingVariables() {
         binding.viewModel = viewModel

@@ -9,32 +9,32 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Parcelize
 data class CoinItem(
-    @field:SerializedName("id")
+    @SerializedName("id")
     @PrimaryKey
     val id: String = "",
-    @field:SerializedName("symbol")
+    @SerializedName("symbol")
     val symbol: String = "",
-    @field:SerializedName("name")
+    @SerializedName("name")
     val name: String = "",
-    @field:SerializedName("image")
+    @SerializedName("image")
     val image: String = "",
-    @field:SerializedName("current_price")
+    @SerializedName("current_price")
     val currentPrice: Float = 0f,
-    @field:SerializedName("market_cap")
+    @SerializedName("market_cap")
     val marketCap: Float = 0f,
-    @field:SerializedName("market_cap_rank")
+    @SerializedName("market_cap_rank")
     val marketCapRank: Int = 0,
-    @field:SerializedName("total_volume")
+    @SerializedName("total_volume")
     val totalVolume: Float = 0f,
-    @field:SerializedName("price_change_percentage_24h")
+    @SerializedName("price_change_percentage_24h")
     val priceChangePercentage24h: Float = 0f,
-    @field:SerializedName("market_cap_change_percentage_24h")
+    @SerializedName("market_cap_change_percentage_24h")
     val marketCapChangePercentage24h: Float = 0f,
-    @field:SerializedName("circulating_supply")
+    @SerializedName("circulating_supply")
     val circulatingSupply: Double = 0.0,
-    @field:SerializedName("total_supply")
+    @SerializedName("total_supply")
     val totalSupply: Float = 0f,
-    @field:SerializedName("ath")
+    @SerializedName("ath")
     val ath: Float = 0f,
-    @field:SerializedName("ath_change_percentage")
+    @SerializedName("ath_change_percentage")
     val athChangePercentage: Float = 0f) : Parcelable

@@ -4,7 +4,7 @@ object Config {
     object AppConfig {
         const val appId = "com.bahaddindemir.bitcointicker"
         const val minSdkVersion = 21
-        const val compileSdkVersion = 33
+        const val compileSdkVersion = 34
         const val targetSdkVersion = 33
         const val versionCode = 1
         const val versionName = "1"

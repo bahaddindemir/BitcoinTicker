@@ -111,10 +111,8 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
     private fun setClickListeners() {
         viewModel.successResponse.observe(this) {
-            handleFavoriteButton()
-        }
-        viewModel.failResponse.observe(this) {
-            showError(getString(R.string.some_error))
+            if (it) handleFavoriteButton()
+            else    showError(getString(R.string.some_error))
         }
         binding.confirmBtn.setOnClickListener {
             setIntervalTime(if (confirmIntervalTime != 0L) confirmIntervalTime else refreshIntervalTime)
@@ -131,7 +129,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
             }
         }
         binding.toolbar.back.setOnClickListener {
-            navigateSafe(DetailFragmentDirections.actionOpenHomeFragment())
+            navigateSafe(DetailFragmentDirections.actionDetailFragmentToHomeFragment())
         }
     }
 

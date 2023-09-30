@@ -1,4 +1,4 @@
-package com.bahaddindemir.bitcointicker.ui.home
+package com.bahaddindemir.bitcointicker.ui.main
 
 import android.content.Intent
 import android.view.MenuItem
@@ -10,13 +10,13 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.services.BackgroundRefreshService
-import com.bahaddindemir.bitcointicker.databinding.ActivityHomeBinding
+import com.bahaddindemir.bitcointicker.databinding.ActivityMainBinding
 import com.bahaddindemir.bitcointicker.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeActivity : BaseActivity<ActivityHomeBinding>() {
-    override fun getLayoutId() = R.layout.activity_home
+class MainActivity : BaseActivity<ActivityMainBinding>() {
+    override fun getLayoutId() = R.layout.activity_main
 
     override fun setUpBottomNavigation() {
         val navHostFragment =

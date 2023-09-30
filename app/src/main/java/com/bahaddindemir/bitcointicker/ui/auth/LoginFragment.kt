@@ -13,7 +13,7 @@ import com.bahaddindemir.bitcointicker.extension.navigateSafe
 import com.bahaddindemir.bitcointicker.extension.openActivityAndClearStack
 import com.bahaddindemir.bitcointicker.extension.showSnackBar
 import com.bahaddindemir.bitcointicker.ui.base.BaseFragment
-import com.bahaddindemir.bitcointicker.ui.home.HomeActivity
+import com.bahaddindemir.bitcointicker.ui.main.MainActivity
 import com.bahaddindemir.bitcointicker.util.showSoftInput
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,14 +37,14 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
 
         viewModel.successResponse.observe(this) {
-            hideLoading()
-            openHome()
-        }
-
-        viewModel.failResponse.observe(this) {
-            hideLoading()
-            // ToDo: There is a bug about snackBar
-            //requireView().showSnackBar(resources.getString(R.string.some_error))
+            if (it) {
+                hideLoading()
+                openHome()
+            } else {
+                hideLoading()
+                //ToDo: There is a bug about snackBar
+                //requireView().showSnackBar(resources.getString(R.string.some_error))
+            }
         }
 
         viewModel.validationException.observe(this) {
@@ -82,10 +82,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private fun openSignUp() {
-        navigateSafe(LoginFragmentDirections.actionOpenSignUpFragment())
+        navigateSafe(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
     }
 
     private fun openHome() {
-        requireActivity().openActivityAndClearStack(HomeActivity::class.java)
+        requireActivity().openActivityAndClearStack(MainActivity::class.java)
     }
 }

@@ -27,8 +27,7 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
             launchOnViewModelScope { this.coinRepository.loadCoinDetail(coinItem) }
         }
 
-    val successResponse = SingleLiveEvent<Void>()
-    val failResponse = SingleLiveEvent<Void>()
+    val successResponse = SingleLiveEvent<Boolean>()
     private val disposables = CompositeDisposable()
 
     fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
@@ -36,9 +35,9 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
                                        .subscribeOn(Schedulers.io())
                                        .observeOn(AndroidSchedulers.mainThread())
                                        .subscribe({
-                                           successResponse.call()
+                                           successResponse.value = true
                                        }, {
-                                           failResponse.call()
+                                           successResponse.value = false
                                        })
         disposables.add(disposable)
     }
@@ -48,9 +47,9 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
                                        .subscribeOn(Schedulers.io())
                                        .observeOn(AndroidSchedulers.mainThread())
                                        .subscribe({
-                                           successResponse.call()
+                                           successResponse.value = true
                                        }, {
-                                           failResponse.call()
+                                           successResponse.value = false
                                        })
         disposables.add(disposable)
     }

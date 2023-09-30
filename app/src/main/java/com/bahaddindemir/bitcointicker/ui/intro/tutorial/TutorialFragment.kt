@@ -30,6 +30,6 @@ class TutorialFragment : BaseFragment<FragmentTutorialBinding>() {
     }
 
     private fun openIntro() {
-        //navigateSafe(TutorialFragmentDirections.actionOpenIntroFragment())
+        navigateSafe(TutorialFragmentDirections.actionTutorialFragmentToIntroFragment())
     }
 }

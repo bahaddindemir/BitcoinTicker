@@ -1,11 +1,11 @@
 package com.bahaddindemir.bitcointicker.buildsrc
 
 object Versions {
-    const val gradleVersion = "8.0.0"
-    const val kotlin = "1.8.10"
+    const val gradleVersion = "8.1.1"
+    const val kotlin = "1.9.10"
 
     // Support
-    const val coreKtx = "1.10.0"
+    const val coreKtx = "1.12.0"
     const val appcompat = "1.6.1"
 
     // Networking
@@ -15,18 +15,18 @@ object Versions {
     const val chuckLogging = "1.1.0"
 
     // UI
-    const val androidNavigation = "2.5.3"
-    const val materialDesign = "1.8.0"
+    const val androidNavigation = "2.7.3"
+    const val materialDesign = "1.9.0"
     const val constraintLayout = "2.1.4"
-    const val recyclerview = "1.3.0"
-    const val navigationCompose = "2.5.3"
+    const val recyclerview = "1.3.1"
+    const val navigationCompose = "2.7.3"
 
     // Utils
     const val localization = "1.5.1"
     const val multidex = "2.0.1"
 
     // Hilt
-    const val hiltVersion = "2.44"
+    const val hiltVersion = "2.48"
 
     // Test
     const val jUnit = "4.13.2"
@@ -34,23 +34,23 @@ object Versions {
     const val espresso = "3.5.1"
 
     // Jetpack Compose
-    const val compose = "1.4.2"
-    const val activityCompose = "1.7.1"
-    const val viewModelCompose = "2.6.1"
+    const val compose = "1.5.1"
+    const val activityCompose = "1.7.2"
+    const val viewModelCompose = "2.6.2"
 
     // Firebase
-    const val googleService = "4.3.15"
-    const val firebaseBom = "31.5.0"
+    const val googleService = "4.4.0"
+    const val firebaseBom = "32.3.1"
 
     // Rx java Android
-    const val rxJava = "3.1.6"
+    const val rxJava = "3.1.7"
     const val rxAndroid = "3.0.2"
 
     // Room
-    const val room = "2.5.1"
+    const val room = "2.6.0-rc01"
 
     // LiveData ViewModel
-    const val lifecycle = "2.6.1"
+    const val lifecycle = "2.6.2"
 
     // Hawk
     const val hawk = "2.0.1"

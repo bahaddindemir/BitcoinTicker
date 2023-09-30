@@ -9,10 +9,10 @@ import javax.inject.Inject
 @HiltViewModel
 class IntroViewModel @Inject constructor(private val generalUseCases: GeneralUseCases) : ViewModel() {
 
-    val openLogIn = SingleLiveEvent<Void>()
+    val openLogIn = SingleLiveEvent<Boolean>()
 
     fun onLogInClicked() {
-        openLogIn.call()
+        openLogIn.value = true
     }
 
     fun setFirstTime(isFirstTime: Boolean) = generalUseCases.setFirstTimeUseCase(isFirstTime)

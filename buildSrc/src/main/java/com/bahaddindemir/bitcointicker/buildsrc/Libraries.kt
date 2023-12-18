@@ -55,6 +55,7 @@ object Libraries {
     const val rxAndroid = "io.reactivex.rxjava3:rxandroid:${Versions.rxAndroid}"
 
     // Room
+    const val roomKTX = "androidx.room:room-ktx:${Versions.room}"
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
     const val roomRxJava = "androidx.room:room-rxjava3:${Versions.room}"

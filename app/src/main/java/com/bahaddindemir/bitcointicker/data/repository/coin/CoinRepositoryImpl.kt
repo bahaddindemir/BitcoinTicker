@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.core.Completable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -47,7 +47,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 }
 
                 override fun fetchService(): LiveData<ApiResponse<CoinDetailItem>> {
-                    return apiService.fetchCoinsDetail(coinItemId).asLiveData()
+                    return apiService.fetchCoinsDetail(coinItemId)
                 }
 
                 override fun onFetchFailed(envelope: Envelope?) {
@@ -82,7 +82,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     map[perPage] = "20"
                     map[sparkline] = false
                     map[priceChangePercentage] = "24h"
-                    return apiService.fetchCoins(map).asLiveData()
+                    return apiService.fetchCoins(map)
                 }
 
                 override fun onFetchFailed(envelope: Envelope?) {
@@ -91,7 +91,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
             }.asLiveData()
         }
 
-    override suspend fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>> = coinDao.getFavoriteCoins()
+    override suspend fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>> = coinDao.getFavoriteCoins().asLiveData()
 
     override fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem):
             Completable = fireStore.addCoinToFavorite(firebaseUser, coinDetailItem)
@@ -106,11 +106,11 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
     //ToDo: Implement get favorites from Firestore
     //fun getMyFavoriteCoinList(firebaseUser: FirebaseUser) = fireStore.getMyCoinFavoriteList(firebaseUser)
 
-    override fun getCoinList() = coinDao.getCoins()
+    override fun getCoinList() = coinDao.getCoins().asLiveData()
 
-    override fun getSearchCoinList(searchKey: String) = coinDao.searchCoins(searchKey)
+    override fun getSearchCoinList(searchKey: String) = coinDao.searchCoins(searchKey).asLiveData()
 
-    override fun getCoinDetail(coinItemId: String) = coinDao.getCoinDetail(coinItemId)
+    override fun getCoinDetail(coinItemId: String) = coinDao.getCoinDetail(coinItemId).asLiveData()
 
     companion object {
         private const val order = "market_cap_desc"

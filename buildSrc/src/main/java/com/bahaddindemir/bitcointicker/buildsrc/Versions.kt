@@ -47,7 +47,7 @@ object Versions {
     const val rxAndroid = "3.0.2"
 
     // Room
-    const val room = "2.6.0-rc01"
+    const val room = "2.6.1"
 
     // LiveData ViewModel
     const val lifecycle = "2.6.2"

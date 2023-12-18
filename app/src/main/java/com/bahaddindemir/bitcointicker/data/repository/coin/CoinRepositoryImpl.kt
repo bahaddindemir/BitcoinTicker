@@ -2,6 +2,7 @@ package com.bahaddindemir.bitcointicker.data.repository.coin
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.bahaddindemir.bitcointicker.data.local.CoinDao
 import com.bahaddindemir.bitcointicker.data.model.ApiResponse
 import com.bahaddindemir.bitcointicker.data.model.Envelope
@@ -19,7 +20,6 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.HashMap
 
 @Singleton
 class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
@@ -47,7 +47,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 }
 
                 override fun fetchService(): LiveData<ApiResponse<CoinDetailItem>> {
-                    return apiService.fetchCoinsDetail(coinItemId)
+                    return apiService.fetchCoinsDetail(coinItemId).asLiveData()
                 }
 
                 override fun onFetchFailed(envelope: Envelope?) {
@@ -82,7 +82,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     map[perPage] = "20"
                     map[sparkline] = false
                     map[priceChangePercentage] = "24h"
-                    return apiService.fetchCoins(map)
+                    return apiService.fetchCoins(map).asLiveData()
                 }
 
                 override fun onFetchFailed(envelope: Envelope?) {

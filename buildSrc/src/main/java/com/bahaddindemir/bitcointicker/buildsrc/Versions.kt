@@ -1,7 +1,7 @@
 package com.bahaddindemir.bitcointicker.buildsrc
 
 object Versions {
-    const val gradleVersion = "8.1.1"
+    const val gradleVersion = "8.2.0"
     const val kotlin = "1.9.10"
 
     // Support

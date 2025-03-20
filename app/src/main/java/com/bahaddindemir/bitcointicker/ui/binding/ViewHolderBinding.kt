@@ -6,13 +6,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bahaddindemir.bitcointicker.R
-import com.bahaddindemir.bitcointicker.di.GlideApp
 import com.bahaddindemir.bitcointicker.util.SharedPreferenceHelper
+import com.bumptech.glide.Glide
 
 @BindingAdapter("bindingCoinImageUrl")
 fun bindingCoinImageUrl(imageView: ImageView, path: String?) {
     path?.let {
-        GlideApp.with(imageView.context)
+        Glide.with(imageView.context)
                 .load(it)
                 .error(ContextCompat.getDrawable(imageView.context, R.drawable.ic_fg))
                 .into(imageView)

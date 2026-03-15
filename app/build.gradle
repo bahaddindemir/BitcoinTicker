@@ -1,5 +1,6 @@
 import com.bahaddindemir.bitcointicker.buildsrc.Config
 import com.bahaddindemir.bitcointicker.buildsrc.Libraries
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id 'com.android.application'
@@ -48,8 +49,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_21
         targetCompatibility JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = '21'
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
@@ -66,7 +70,7 @@ dependencies {
 
     // Hilt
     implementation Libraries.hilt
-    kapt Libraries.hiltDaggerCompiler
+    ksp Libraries.hiltDaggerCompiler
 
     // Networking
     implementation Libraries.gson
@@ -94,7 +98,7 @@ dependencies {
     implementation Libraries.roomKTX
     implementation Libraries.roomRuntime
     implementation Libraries.roomRxJava
-    kapt Libraries.roomCompiler
+    ksp Libraries.roomCompiler
 
     // LiveData ViewModel
     implementation Libraries.lifeCycleView

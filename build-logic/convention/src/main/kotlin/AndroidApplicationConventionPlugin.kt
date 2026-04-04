@@ -10,12 +10,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
   override fun apply(target: Project) = with(target) {
     extensions.configure<ApplicationExtension> {
       namespace = "com.bahaddindemir.bitcointicker"
-      compileSdk = 35
+      compileSdk = 36
 
       defaultConfig {
         applicationId = "com.bahaddindemir.bitcointicker"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

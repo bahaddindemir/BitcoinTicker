@@ -18,18 +18,19 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SignupFragment : BaseFragment<FragmentSignupBinding>() {
+class SignupFragment : BaseFragment<FragmentSignupBinding>(FragmentSignupBinding::inflate) {
     private val viewModel: AuthViewModel by viewModels()
 
-    override
-    fun getLayoutId() = R.layout.fragment_signup
-
-    override
-    fun setBindingVariables() {
-        binding.authViewModel = viewModel
+    override fun setUpViews() {
+        binding.etEmail.setText(viewModel.request.email)
+        binding.etPassword.setText(viewModel.request.password)
     }
 
     override fun setupObservers() {
+        binding.tvSignup.setOnClickListener {
+            viewModel.onSignupClicked()
+        }
+
         viewModel.successResponse.observe(this) {
             if (it) {
                 hideLoading()
@@ -48,11 +49,13 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
                     showSoftInput(binding.etEmail, requireContext())
                     requireView().showSnackBar(resources.getString(R.string.empty_email))
                 }
+
                 AuthFieldsValidation.INVALID_EMAIL.value -> {
                     binding.etEmail.requestFocus()
                     showSoftInput(binding.etEmail, requireContext())
                     requireView().showSnackBar(resources.getString(R.string.invalid_email))
                 }
+
                 AuthFieldsValidation.EMPTY_PASSWORD.value -> {
                     binding.etPassword.requestFocus()
                     showSoftInput(binding.etPassword, requireContext())

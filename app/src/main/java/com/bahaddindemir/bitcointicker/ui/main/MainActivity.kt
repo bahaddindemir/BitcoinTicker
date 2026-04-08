@@ -15,8 +15,7 @@ import com.bahaddindemir.bitcointicker.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>() {
-    override fun getLayoutId() = R.layout.activity_main
+class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
 
     override fun setUpBottomNavigation() {
         val navHostFragment =

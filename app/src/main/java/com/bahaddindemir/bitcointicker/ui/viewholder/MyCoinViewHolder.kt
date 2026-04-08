@@ -4,6 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.databinding.ItemMyCoinBinding
+import com.bahaddindemir.bitcointicker.extension.loadImage
 import com.bahaddindemir.bitcointicker.ui.base.BaseAdapter
 
 class MyCoinViewHolder(private val binding: ItemMyCoinBinding, private val delegate: Delegate) :
@@ -14,8 +15,8 @@ class MyCoinViewHolder(private val binding: ItemMyCoinBinding, private val deleg
 
     override fun bind(data: CoinDetailItem) {
         binding.apply {
-            coinDetailItem = data
-            executePendingBindings()
+            coinName.text = data.name
+            data.image?.small?.let { coinImage.loadImage(it) }
         }
 
         itemView.setOnClickListener { delegate.onItemClick(data, view = it) }

@@ -22,7 +22,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailFragment : BaseFragment<FragmentDetailBinding>() {
+class DetailFragment : BaseFragment<FragmentDetailBinding>(FragmentDetailBinding::inflate) {
     private val viewModel: DetailViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
 
@@ -46,8 +46,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         }
     }
 
-    override fun getLayoutId() = R.layout.fragment_detail
-
     override fun getFragmentArguments() {
         super.getFragmentArguments()
         initAndRefreshIntervalTime()
@@ -59,11 +57,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         }
     }
 
-    override
-    fun setBindingVariables() {
-        binding.viewModel = viewModel
-    }
-
     override fun setupObservers() {
         observeCoinDetailData()
         setClickListeners()
@@ -73,9 +66,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
         val refreshTime: String = refreshIntervalTime.toString()
         binding.refreshInterval.setText(refreshTime)
         binding.refreshInterval.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
@@ -91,6 +84,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                 Status.LOADING -> {
                     showLoading()
                 }
+
                 Status.SUCCESS -> {
                     hideLoading()
                     resource.data?.let {
@@ -101,6 +95,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
                     msg.what = WHAT_MSG
                     mHandler.sendMessageDelayed(msg, refreshIntervalTime)
                 }
+
                 Status.ERROR -> {
                     hideLoading()
                     showError(getString(R.string.some_error))
@@ -112,7 +107,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
     private fun setClickListeners() {
         viewModel.successResponse.observe(this) {
             if (it) handleFavoriteButton()
-            else    showError(getString(R.string.some_error))
+            else showError(getString(R.string.some_error))
         }
         binding.confirmBtn.setOnClickListener {
             setIntervalTime(if (confirmIntervalTime != 0L) confirmIntervalTime else refreshIntervalTime)

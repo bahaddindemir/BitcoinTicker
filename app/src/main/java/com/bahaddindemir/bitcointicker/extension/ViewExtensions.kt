@@ -1,15 +1,16 @@
 package com.bahaddindemir.bitcointicker.extension
 
-import android.view.View
-import androidx.constraintlayout.widget.Group
-import androidx.databinding.BindingAdapter
-import com.google.android.material.snackbar.Snackbar
 import android.view.Gravity
-
+import android.view.View
 import android.widget.FrameLayout
+import androidx.constraintlayout.widget.Group
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.isVisible
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 
 fun View.show() {
-    if (visibility == View.VISIBLE) return
+    if (isVisible) return
 
     visibility = View.VISIBLE
     if (this is Group) {
@@ -18,7 +19,7 @@ fun View.show() {
 }
 
 fun View.hide() {
-    if (visibility == View.GONE) return
+    if (isGone) return
 
     visibility = View.GONE
     if (this is Group) {
@@ -27,17 +28,9 @@ fun View.hide() {
 }
 
 fun View.invisible() {
-    if (visibility == View.INVISIBLE) return
+    if (isInvisible) return
 
     visibility = View.INVISIBLE
-    if (this is Group) {
-        this.requestLayout()
-    }
-}
-
-@BindingAdapter("app:goneUnless")
-fun View.goneUnless(visible: Boolean) {
-    visibility = if (visible) View.VISIBLE else View.GONE
     if (this is Group) {
         this.requestLayout()
     }

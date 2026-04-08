@@ -20,19 +20,19 @@ import com.bahaddindemir.bitcointicker.ui.adapter.CoinAdapter
 import com.bahaddindemir.bitcointicker.ui.base.BaseFragment
 import com.bahaddindemir.bitcointicker.ui.viewholder.CoinViewHolder
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.view.isVisible
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegate {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
+    CoinViewHolder.Delegate {
     private val viewModel: HomeViewModel by viewModels()
     private var coinAdapter = CoinAdapter(this)
-
-    override fun getLayoutId() = R.layout.fragment_home
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (binding.toolbar.searchView.visibility == View.VISIBLE) {
+                if (binding.toolbar.searchView.isVisible) {
                     binding.toolbar.closeBtn.performClick()
                 } else {
                     isEnabled = false
@@ -42,14 +42,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
         })
     }
 
-    override fun setBindingVariables() {
-        binding.viewModel = viewModel
-        binding.coinsRecycler.adapter = coinAdapter
-    }
-
     override fun setUpViews() {
         initializeUI()
         loadCoinsMarkets(1)
+
+        binding.coinsRecycler.adapter = coinAdapter
     }
 
     override fun setupObservers() {
@@ -60,9 +57,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
 
     private fun setSearchTextListeners() {
         binding.toolbar.txtSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
                 val searchKey: String = s.toString().trim()
@@ -115,11 +112,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinViewHolder.Delegat
                     binding.tableCoins.visibility = View.GONE
                     binding.coinsRecycler.visibility = View.GONE
                 }
+
                 Status.SUCCESS -> {
                     hideLoading()
+                    resource.data?.let { coinAdapter.setData(it) }
                     binding.tableCoins.visibility = View.VISIBLE
                     binding.coinsRecycler.visibility = View.VISIBLE
                 }
+
                 Status.ERROR -> {
                     hideLoading()
                     showError(getString(R.string.some_error))

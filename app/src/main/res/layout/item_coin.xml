@@ -1,99 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tableCoins"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="horizontal">
 
-    <data>
-        <variable
-            name="coinItem"
-            type="com.bahaddindemir.bitcointicker.data.model.coin.CoinItem" />
-    </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/tableCoins"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/coinImage"
+        android:layout_width="80dp"
         android:layout_height="80dp"
-        android:orientation="horizontal">
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/ic_fg" />
 
-        <ImageView
-            android:id="@+id/coinImage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:padding="16dp"
-            app:bindingCoinImageUrl="@{coinItem.image}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription"
-            tools:src="@drawable/ic_fg" />
+    <LinearLayout
+        android:id="@+id/coinContainer"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="14dp"
+        app:layout_constraintStart_toEndOf="@+id/coinImage"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/coinContainer"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="14dp"
-            app:layout_constraintStart_toEndOf="@+id/coinImage"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@{coinItem.name}"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textAlignment="center"
-                android:maxLines="1"
-                tools:text="Bitcoin" />
-
-            <TextView
-                android:id="@+id/symbol"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:text="@{coinItem.symbol.toUpperCase()}"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textAlignment="center"
-                tools:text="BTC" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/priceContainer"
+        <TextView
+            android:id="@+id/name"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="8dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:text="Bitcoin" />
+
+        <TextView
+            android:id="@+id/symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="BTC" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/priceContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/currentPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="14dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:text="44,051 XRP" />
 
-            <TextView
-                android:id="@+id/currentPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                app:bindingMarketCapToText="@{coinItem.currentPrice}"
-                tools:text="44,051 XRP" />
-
-            <TextView
-                android:id="@+id/priceChangePercentage24h"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:bindingPriceChangePercentage24hToText="@{coinItem.priceChangePercentage24h}"
-                tools:text="-1.5603" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+        <TextView
+            android:id="@+id/priceChangePercentage24h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="-1.5603" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

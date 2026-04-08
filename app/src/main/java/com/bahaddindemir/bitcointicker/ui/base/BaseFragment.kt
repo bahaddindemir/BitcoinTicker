@@ -5,72 +5,55 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.viewbinding.ViewBinding
 import com.bahaddindemir.bitcointicker.util.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.util.showLoadingDialog
 
-abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding>(private val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB) :
+    Fragment() {
     private var _binding: VB? = null
     open val binding get() = _binding!!
-    private var mRootView: View? = null
-    private var hasInitializedRootView = false
     private var progressDialog: Dialog? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (mRootView == null) {
-            initViewBinding(inflater, container)
-        }
-
-        return mRootView
-    }
-
-    private fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?) {
-        _binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-
-        mRootView = binding.root
-        binding.lifecycleOwner = this
-        binding.executePendingBindings()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        registerListeners()
-    }
-
-    override fun onPause() {
-        unRegisterListeners()
-
-        super.onPause()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = bindingInflater(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!hasInitializedRootView) {
-            getFragmentArguments()
-            setBindingVariables()
-            setUpViews()
-            observeAPICall()
-            setupObservers()
-
-            hasInitializedRootView = true
-        }
+        getFragmentArguments()
+        setUpViews()
+        observeAPICall()
+        setupObservers()
     }
 
-    @LayoutRes
-    abstract fun getLayoutId(): Int
+    override fun onResume() {
+        super.onResume()
+        registerListeners()
+    }
+
+    override fun onPause() {
+        unRegisterListeners()
+        super.onPause()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 
     open fun registerListeners() {}
 
     open fun unRegisterListeners() {}
 
     open fun getFragmentArguments() {}
-
-    open fun setBindingVariables() {}
 
     open fun setUpViews() {}
 

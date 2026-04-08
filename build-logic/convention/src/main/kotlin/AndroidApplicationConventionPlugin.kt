@@ -22,7 +22,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
       }
 
       buildFeatures {
-        dataBinding = true
         viewBinding = true
         buildConfig = true
       }

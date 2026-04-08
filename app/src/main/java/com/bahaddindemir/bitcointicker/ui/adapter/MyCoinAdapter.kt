@@ -23,8 +23,7 @@ class MyCoinAdapter(private val delegate: MyCoinViewHolder.Delegate) : BaseAdapt
     }
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Int) -> ViewBinding
-        get() =
-            { inflater, parent, _ -> ItemMyCoinBinding.inflate(inflater, parent, false) }
+        get() = { inflater, parent, _ -> ItemMyCoinBinding.inflate(inflater, parent, false) }
 
     fun addCurrencyItemList(resource: List<CoinDetailItem>?) {
         resource?.let { setItems(it) }

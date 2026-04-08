@@ -30,7 +30,6 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
 
     val validationException = SingleLiveEvent<Int>()
     val successResponse = SingleLiveEvent<Boolean>()
-    val toSignupButton = SingleLiveEvent<Boolean>()
 
     private val disposable = CompositeDisposable()
 
@@ -46,10 +45,6 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     fun onSignupClicked() {
         authUseCase()
         signup()
-    }
-
-    fun onToSignupClicked() {
-        toSignupButton.value = true
     }
 
     private fun login() {

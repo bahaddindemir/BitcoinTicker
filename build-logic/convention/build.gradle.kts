@@ -20,7 +20,6 @@ kotlin {
 dependencies {
     compileOnly(libs.android.gradle)
     compileOnly(libs.kotlin.gradlePlugin)
-
 }
 
 gradlePlugin {

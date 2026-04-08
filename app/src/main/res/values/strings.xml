@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Bitcoin Ticker</string>
 
+    <!-- Splash -->
+    <string name="splash_text">BT</string>
+
     <!-- General Strings -->
     <string name="welcome">Welcome</string>
     <string name="hide">Hide</string>

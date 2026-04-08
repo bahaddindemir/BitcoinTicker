@@ -1,14 +1,14 @@
 package com.bahaddindemir.bitcointicker.ui.base
 
 import android.os.Bundle
-import androidx.annotation.LayoutRes
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import androidx.viewbinding.ViewBinding
 
-abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
+abstract class BaseActivity<VB : ViewBinding>(private val bindingInflater: (LayoutInflater) -> VB) :
+    AppCompatActivity() {
     private var _binding: VB? = null
     open val binding get() = _binding!!
     lateinit var navController: LiveData<NavController>
@@ -32,13 +32,9 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
     }
 
     private fun initViewBinding() {
-        _binding = DataBindingUtil.setContentView(this, getLayoutId())
-        binding.lifecycleOwner = this
-        binding.executePendingBindings()
+        _binding = bindingInflater(layoutInflater)
+        setContentView(binding.root)
     }
-
-    @LayoutRes
-    abstract fun getLayoutId(): Int
 
     open fun setUpBottomNavigation() {}
 

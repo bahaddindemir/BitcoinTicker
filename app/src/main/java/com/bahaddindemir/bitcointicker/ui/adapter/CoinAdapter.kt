@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
-import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.databinding.ItemCoinBinding
 import com.bahaddindemir.bitcointicker.ui.base.BaseAdapter
 import com.bahaddindemir.bitcointicker.ui.viewholder.CoinViewHolder
@@ -24,12 +23,7 @@ class CoinAdapter(private val delegate: CoinViewHolder.Delegate) : BaseAdapter<C
     }
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Int) -> ViewBinding
-        get() =
-            { inflater, parent, _ -> ItemCoinBinding.inflate(inflater, parent, false) }
-
-    fun addCurrencyItemList(resource: CoinResource<List<CoinItem>?>) {
-        resource.data?.let { setItems(it) }
-    }
+        get() = { inflater, parent, _ -> ItemCoinBinding.inflate(inflater, parent, false) }
 
     fun setData(coinList: List<CoinItem>?) {
         coinList?.let { setItems(it) }

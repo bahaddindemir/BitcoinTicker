@@ -14,18 +14,24 @@ import com.bahaddindemir.bitcointicker.ui.viewholder.MyCoinViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MyCoinFragment : BaseFragment<FragmentMyCoinBinding>(), MyCoinViewHolder.Delegate {
+class MyCoinFragment : BaseFragment<FragmentMyCoinBinding>(FragmentMyCoinBinding::inflate),
+    MyCoinViewHolder.Delegate {
     private val viewModel: MyCoinViewModel by viewModels()
 
     private val myCoinAdapter = MyCoinAdapter(this)
 
     private lateinit var coinItem: CoinItem
 
-    override fun getLayoutId() = R.layout.fragment_my_coin
-
-    override fun setBindingVariables() {
-        binding.viewModel = viewModel
+    override fun setUpViews() {
         binding.myCoinsRecyclerview.adapter = myCoinAdapter
+    }
+
+    override fun setupObservers() {
+        viewModel.coinLiveData.observe(viewLifecycleOwner) { resource ->
+            if (!resource.isNullOrEmpty()) {
+                myCoinAdapter.addCurrencyItemList(resource)
+            }
+        }
     }
 
     override fun onItemClick(coinDetailItem: CoinDetailItem, view: View) {

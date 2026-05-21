@@ -1,11 +1,12 @@
 plugins {
-  id("com.android.application")
-  id("com.google.devtools.ksp")
-  id("kotlin-android")
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.kotlin.android)
   id("kotlin-parcelize")
-  id("dagger.hilt.android.plugin")
-  id("androidx.navigation.safeargs")
-  id("com.google.gms.google-services")
+  alias(libs.plugins.hilt)
+  alias(libs.plugins.navigation.safe.args)
+  alias(libs.plugins.google.services)
+  alias(libs.plugins.compose.compiler)
   id("bitcointicker.android.application")
 }
 
@@ -20,6 +21,18 @@ dependencies {
   testImplementation(libs.junit)
   androidTestImplementation(libs.junit.ext)
   androidTestImplementation(libs.espresso)
+  androidTestImplementation(libs.compose.test)
+  androidTestImplementation(platform(libs.androidx.compose.bom))
+
+  // Compose
+  implementation(platform(libs.androidx.compose.bom))
+  implementation(libs.activity.compose)
+  implementation(libs.viewmodel.compose)
+  implementation(libs.compose.material3)
+  implementation(libs.compose.animation)
+  implementation(libs.compose.preview)
+  implementation(libs.compose.ui)
+  debugImplementation(libs.compose.ui.tooling)
 
   // Hilt
   implementation(libs.hilt.android)
@@ -36,6 +49,7 @@ dependencies {
   implementation(libs.navigation.fragment)
   implementation(libs.navigation.ui)
   implementation(libs.navigation.dynamic)
+  implementation(libs.navigation.compose)
   androidTestImplementation(libs.navigation.test)
 
   // Firebase

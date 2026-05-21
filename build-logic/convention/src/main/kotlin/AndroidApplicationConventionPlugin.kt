@@ -24,6 +24,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
       buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
       }
 
       buildTypes {

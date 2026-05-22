@@ -14,8 +14,7 @@
     <fragment
         android:id="@+id/detail_fragment"
         android:name="com.bahaddindemir.bitcointicker.ui.detail.DetailFragment"
-        android:label="DetailFragment"
-        tools:layout="@layout/fragment_detail" >
+        android:label="DetailFragment" >
 
         <action
             android:id="@+id/action_detail_fragment_to_home_fragment"

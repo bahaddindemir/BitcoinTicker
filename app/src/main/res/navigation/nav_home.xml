@@ -29,6 +29,5 @@
     <fragment
         android:id="@+id/my_coin_fragment"
         android:name="com.bahaddindemir.bitcointicker.ui.mycoin.MyCoinFragment"
-        android:label="MyCoinFragment"
-        tools:layout="@layout/fragment_my_coin" />
+        android:label="MyCoinFragment" />
 </navigation>

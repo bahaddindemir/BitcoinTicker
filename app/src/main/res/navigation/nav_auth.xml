@@ -31,8 +31,7 @@
 
     <fragment
         android:id="@+id/login_fragment"
-        android:name="com.bahaddindemir.bitcointicker.ui.auth.LoginFragment"
-        tools:layout="@layout/fragment_login">
+        android:name="com.bahaddindemir.bitcointicker.ui.auth.LoginFragment">
 
         <action
             android:id="@+id/action_login_fragment_to_sign_up_fragment"

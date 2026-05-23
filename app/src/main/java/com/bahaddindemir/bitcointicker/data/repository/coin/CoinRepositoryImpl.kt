@@ -2,7 +2,6 @@ package com.bahaddindemir.bitcointicker.data.repository.coin
 
 import android.util.Log
 import com.bahaddindemir.bitcointicker.data.local.CoinDao
-import com.bahaddindemir.bitcointicker.data.model.Envelope
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
@@ -45,8 +44,8 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     return apiService.fetchCoinsDetail(coinItemId)
                 }
 
-                override fun onFetchFailed(envelope: Envelope?) {
-                    Log.w(this.toString(),"onFetchFailed : $envelope")
+                override fun onFetchFailed(message: String) {
+                    Log.w(this.toString(),"onFetchFailed : $message")
                 }
             }.asFlow()
 
@@ -78,8 +77,8 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     return apiService.fetchCoins(map)
                 }
 
-                override fun onFetchFailed(envelope: Envelope?) {
-                    Log.w(this.toString(),"onFetchFailed : $envelope")
+                override fun onFetchFailed(message: String) {
+                    Log.w(this.toString(),"onFetchFailed : $message")
                 }
             }.asFlow()
 

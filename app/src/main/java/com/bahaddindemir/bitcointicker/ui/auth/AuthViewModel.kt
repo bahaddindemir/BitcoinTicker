@@ -3,29 +3,30 @@ package com.bahaddindemir.bitcointicker.ui.auth
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
 import com.bahaddindemir.bitcointicker.data.model.AuthRequest
-import com.bahaddindemir.bitcointicker.util.AuthUseCase
-import com.bahaddindemir.bitcointicker.data.model.Resource
+import com.bahaddindemir.bitcointicker.data.model.LoginValidationException
 import com.bahaddindemir.bitcointicker.data.repository.auth.AuthRepository
 import com.bahaddindemir.bitcointicker.util.AppPreferences
+import com.bahaddindemir.bitcointicker.util.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
-                                        private val authRepository: AuthRepository,
-                                        private val appPreferences: AppPreferences) : ViewModel()
-{
+class AuthViewModel @Inject constructor(
+    private val authUseCase: AuthUseCase,
+    private val authRepository: AuthRepository,
+    private val appPreferences: AppPreferences
+) : ViewModel() {
     var request = AuthRequest()
-    private val _authResponse = MutableStateFlow<Any>(Resource.Default)
-    val authResponse = _authResponse
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     private val _validationException = MutableSharedFlow<Int>(extraBufferCapacity = 1)
     val validationException = _validationException.asSharedFlow()
@@ -38,47 +39,43 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     }
 
     fun onLoginClicked() {
-        authUseCase()
-        login()
+        authenticate(::login)
     }
 
     fun onSignupClicked() {
-        authUseCase()
-        signup()
+        authenticate(::signup)
     }
 
-    private fun login() {
+    private fun authenticate(action: suspend () -> Unit) {
         viewModelScope.launch {
             try {
-                authRepository.login(request)
+                authUseCase(request)
+                _isLoading.value = true
+                action()
                 appPreferences.isLoggedIn = true
                 _successResponse.emit(true)
+            } catch (exception: LoginValidationException) {
+                emitValidationError(exception)
             } catch (exception: Exception) {
                 _successResponse.emit(false)
                 Log.w(this.toString(), exception.message.orEmpty())
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
-    private fun signup() {
-        viewModelScope.launch {
-            try {
-                authRepository.register(request)
-                appPreferences.isLoggedIn = true
-                _successResponse.emit(true)
-            } catch (exception: Exception) {
-                _successResponse.emit(false)
-                Log.w(this.toString(), exception.message.orEmpty())
-            }
-        }
+    private suspend fun login() {
+        authRepository.login(request)
     }
 
-    private fun authUseCase() {
-        authUseCase(request)
-            .catch { exception ->
-                exception.message?.toIntOrNull()?.let { _validationException.emit(it) }
-            }
-            .onEach { result -> _authResponse.value = result }
-            .launchIn(viewModelScope)
+    private suspend fun signup() {
+        authRepository.register(request)
+    }
+
+    private suspend fun emitValidationError(exception: LoginValidationException) {
+        val validationType = exception.message?.toIntOrNull()
+            ?: AuthFieldsValidation.EMPTY_EMAIL.value
+        _validationException.emit(validationType)
     }
 }

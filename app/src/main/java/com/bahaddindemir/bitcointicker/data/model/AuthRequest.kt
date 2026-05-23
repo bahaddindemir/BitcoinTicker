@@ -7,4 +7,4 @@ data class AuthRequest(
     constructor() : this("", "")
 }
 
-class LoginValidationException(private val validationType: String) : Exception(validationType)
+class LoginValidationException(validationType: String) : Exception(validationType)

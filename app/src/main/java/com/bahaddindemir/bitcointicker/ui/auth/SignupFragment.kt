@@ -53,7 +53,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
-import com.bahaddindemir.bitcointicker.data.model.Resource
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
 import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.openActivityAndClearStack
@@ -129,12 +128,12 @@ class SignupFragment : Fragment() {
                 }
 
                 launch {
-                    viewModel.authResponse.collect {
-                        when (it) {
-                            Resource.Loading -> {
-                                hideKeyboard()
-                                showLoading()
-                            }
+                    viewModel.isLoading.collect { isLoading ->
+                        if (isLoading) {
+                            hideKeyboard()
+                            showLoading()
+                        } else {
+                            hideLoading()
                         }
                     }
                 }

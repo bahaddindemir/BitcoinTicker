@@ -1,16 +1,14 @@
 package com.bahaddindemir.bitcointicker.util
 
-import com.bahaddindemir.bitcointicker.data.model.*
+import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
+import com.bahaddindemir.bitcointicker.data.model.AuthRequest
+import com.bahaddindemir.bitcointicker.data.model.LoginValidationException
 import com.bahaddindemir.bitcointicker.extension.isValidEmail
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class AuthUseCase @Inject constructor() {
     @Throws(LoginValidationException::class)
-    operator fun invoke(request: AuthRequest): Flow<Any> = flow {
+    operator fun invoke(request: AuthRequest) {
         if (request.email.isEmpty()) {
             throw LoginValidationException(AuthFieldsValidation.EMPTY_EMAIL.value.toString())
         }
@@ -22,7 +20,5 @@ class AuthUseCase @Inject constructor() {
         if (request.password.isEmpty()) {
             throw LoginValidationException(AuthFieldsValidation.EMPTY_PASSWORD.value.toString())
         }
-
-        emit(Resource.Loading)
-    }.flowOn(Dispatchers.IO)
+    }
 }

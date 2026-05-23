@@ -44,8 +44,7 @@
 
     <fragment
         android:id="@+id/signup_fragment"
-        android:name="com.bahaddindemir.bitcointicker.ui.auth.SignupFragment"
-        tools:layout="@layout/fragment_signup" />
+        android:name="com.bahaddindemir.bitcointicker.ui.auth.SignupFragment" />
 
     <fragment
         android:id="@+id/tutorial_fragment"

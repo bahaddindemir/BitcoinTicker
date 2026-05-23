@@ -49,9 +49,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.core.text.HtmlCompat
 import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.Status
@@ -62,7 +62,6 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinLocalization
 import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
 import com.bahaddindemir.bitcointicker.extension.loadImage
-import com.bahaddindemir.bitcointicker.extension.navigateSafe
 import com.bahaddindemir.bitcointicker.extension.parcelable
 import com.bahaddindemir.bitcointicker.extension.showError
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel

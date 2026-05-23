@@ -2,21 +2,12 @@ package com.bahaddindemir.bitcointicker.util
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Patterns
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.bahaddindemir.bitcointicker.R
-
-fun showMessage(context: Context, message: String?) {
-    Toast.makeText(context, message ?: context.resources.getString(R.string.some_error), Toast.LENGTH_SHORT)
-         .show()
-}
 
 fun showLoadingDialog(activity: Activity?, hint: String?): Dialog? {
     if (activity == null || activity.isFinishing) {
@@ -47,12 +38,6 @@ fun hideLoadingDialog(mProgressDialog: Dialog?, activity: Activity?) {
     if (activity != null && !activity.isFinishing && mProgressDialog != null && mProgressDialog.isShowing) {
         mProgressDialog.dismiss()
     }
-}
-
-fun setImageWithGlide(view: ImageView, imageUrl: String?) {
-    Glide.with(view.context)
-         .load(imageUrl)
-         .into(view)
 }
 
 fun String.isValidEmail(): Boolean = Patterns.EMAIL_ADDRESS.matcher(this).matches()

@@ -21,16 +21,6 @@ fun <A : Activity> Fragment.openActivity(activity: Class<A>) {
     requireActivity().openActivity(activity)
 }
 
-fun <T> Fragment.getNavigationResultLiveData(key: String = "result") =
-    findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<T>(key)
-
-fun <T> Fragment.removeNavigationResultObserver(key: String = "result") =
-    findNavController().currentBackStackEntry?.savedStateHandle?.remove<T>(key)
-
-fun <T> Fragment.setNavigationResult(result: T, key: String = "result") {
-    findNavController().previousBackStackEntry?.savedStateHandle?.set(key, result)
-}
-
 fun Fragment.onBackPressedCustomAction(action: () -> Unit) {
     requireActivity().onBackPressedDispatcher.addCallback(
         viewLifecycleOwner,

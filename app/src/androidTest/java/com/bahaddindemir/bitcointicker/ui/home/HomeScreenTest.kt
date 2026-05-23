@@ -10,21 +10,13 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.test.core.app.ApplicationProvider
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
-import com.orhanobut.hawk.Hawk
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class HomeScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
-
-    @Before
-    fun setUp() {
-        Hawk.init(ApplicationProvider.getApplicationContext()).build()
-    }
 
     @Test
     fun homeScreenDisplaysCoinList() {

@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import com.orhanobut.hawk.Hawk
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -15,8 +14,6 @@ class BitcoinTickerApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        Hawk.init(applicationContext).build()
 
         createNotificationChannel()
     }

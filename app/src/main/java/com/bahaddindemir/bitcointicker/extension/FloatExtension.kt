@@ -1,9 +1,7 @@
 package com.bahaddindemir.bitcointicker.extension
 
-import com.bahaddindemir.bitcointicker.util.SharedPreferenceHelper
-
 fun Float.marketCapToText(): String {
-    val currency = (SharedPreferenceHelper.getSharedData("DEFAULT_CURRENCY") as? String) ?: "BTC"
+    val currency = "BTC"
     val value = this.toString().take(6)
 
     return "$value $currency"

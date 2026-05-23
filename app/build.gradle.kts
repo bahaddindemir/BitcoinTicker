@@ -73,7 +73,6 @@ dependencies {
 
   // FireStore
   implementation(libs.firebase.firestore)
-  implementation(libs.hawk)
 
   // Glide
   implementation(libs.glide)

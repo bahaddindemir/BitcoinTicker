@@ -19,14 +19,6 @@
             app:popUpTo="@+id/nav_home"
             app:popUpToInclusive="true" />
 
-        <action
-            android:id="@+id/action_splash_fragment_to_tutorial_fragment"
-            app:destination="@id/tutorial_fragment"
-            app:enterAnim="@anim/anim_slide_in_right"
-            app:exitAnim="@anim/anim_slide_out_left"
-            app:launchSingleTop="true"
-            app:popUpTo="@+id/nav_home"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -47,21 +39,7 @@
         android:name="com.bahaddindemir.bitcointicker.ui.auth.SignupFragment" />
 
     <fragment
-        android:id="@+id/tutorial_fragment"
-        android:name="com.bahaddindemir.bitcointicker.ui.intro.tutorial.TutorialFragment"
-        tools:layout="@layout/fragment_tutorial">
-
-        <action
-            android:id="@+id/action_tutorial_fragment_to_intro_fragment"
-            app:destination="@id/intro_fragment"
-            app:enterAnim="@anim/anim_slide_in_top"
-            app:exitAnim="@anim/anim_slide_out_bottom"
-            app:popEnterAnim="@anim/anim_slide_in_bottom"
-            app:popExitAnim="@anim/anim_slide_out_top" />
-    </fragment>
-
-    <fragment
         android:id="@+id/intro_fragment"
-        android:name="com.bahaddindemir.bitcointicker.ui.intro.intro.IntroFragment"
+        android:name="com.bahaddindemir.bitcointicker.ui.intro.IntroFragment"
         tools:layout="@layout/fragment_intro" />
 </navigation>

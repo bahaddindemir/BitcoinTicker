@@ -43,7 +43,6 @@ class SplashFragment : Fragment() {
             if (viewModel.isFirstTime()) {
                 viewModel.setFirstTime()
                 navigateSafe(SplashFragmentDirections.actionSplashFragmentToLoginFragment())
-                //navigateSafe(SplashFragmentDirections.actionSplashFragmentToTutorialFragment())
             } else if (viewModel.isLoggedIn()) {
                 openActivityAndClearStack(MainActivity::class.java)
             } else {

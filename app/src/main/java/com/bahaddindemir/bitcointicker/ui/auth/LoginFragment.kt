@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -278,7 +279,11 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(start = 20.dp, top = 50.dp, end = 20.dp)
                 .height(40.dp)
-                .clickable(onClick = onSignupClick),
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onSignupClick
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(

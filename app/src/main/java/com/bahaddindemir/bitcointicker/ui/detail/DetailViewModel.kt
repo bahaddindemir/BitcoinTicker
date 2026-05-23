@@ -30,7 +30,7 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = CoinResource.loading(null, null)
+            initialValue = CoinResource.Loading
         )
 
     private val _successResponse = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)

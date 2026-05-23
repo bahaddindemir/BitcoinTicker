@@ -57,11 +57,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
-import com.bahaddindemir.bitcointicker.data.model.Status
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinImage
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinLocalization
+import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
 import com.bahaddindemir.bitcointicker.extension.loadImage
@@ -155,9 +155,9 @@ class DetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.coinDetailState.collect { resource ->
-                    when (resource.status) {
-                        Status.LOADING -> showLoading()
-                        Status.SUCCESS -> {
+                    when (resource) {
+                        CoinResource.Loading -> showLoading()
+                        is CoinResource.Success -> {
                             hideLoading()
                             resource.data?.let {
                                 handleCoinDetailDataOnSuccess(it)
@@ -168,7 +168,7 @@ class DetailFragment : Fragment() {
                             handler.sendMessageDelayed(msg, refreshIntervalTime)
                         }
 
-                        Status.ERROR -> {
+                        is CoinResource.Error -> {
                             hideLoading()
                             showError(getString(R.string.some_error))
                         }

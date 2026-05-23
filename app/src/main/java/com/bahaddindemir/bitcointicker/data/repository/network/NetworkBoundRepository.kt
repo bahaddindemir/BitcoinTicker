@@ -21,7 +21,7 @@ internal constructor() {
         val cachedData = loadedFromDb.first()
 
         if (shouldFetch(cachedData)) {
-            emit(CoinResource.loading(null, null))
+            emit(CoinResource.Loading)
             val response = try {
                 ApiResponse(fetchService())
             } catch (throwable: Throwable) {
@@ -31,17 +31,17 @@ internal constructor() {
             if (response.isSuccessful) {
                 response.body?.let { saveFetchData(it) }
                 loadFromDb()
-                    .map { CoinResource.success(it, response.nextPage) }
+                    .map { CoinResource.Success(it, response.nextPage) }
                     .collect { emit(it) }
             } else {
                 onFetchFailed(response.envelope)
                 loadFromDb()
-                    .map { CoinResource.error(response.envelope?.message.orEmpty(), it) }
+                    .map { CoinResource.Error(response.envelope?.message.orEmpty(), it) }
                     .collect { emit(it) }
             }
         } else {
             loadedFromDb
-                .map { CoinResource.success(it, 1) }
+                .map { CoinResource.Success(it, 1) }
                 .collect { emit(it) }
         }
     }

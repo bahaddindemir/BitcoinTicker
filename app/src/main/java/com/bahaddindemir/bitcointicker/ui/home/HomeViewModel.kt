@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(private val coinRepository: CoinReposito
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = CoinResource.loading(null, null)
+            initialValue = CoinResource.Loading
         )
 
     val searchCoinState: StateFlow<List<CoinItem>> = searchKeyCoin

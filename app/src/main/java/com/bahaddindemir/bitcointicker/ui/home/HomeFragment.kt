@@ -58,8 +58,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
-import com.bahaddindemir.bitcointicker.data.model.Status
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
+import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
 import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.isNegative
@@ -135,19 +135,19 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
                     viewModel.coinState.collect { resource ->
-                        when (resource.status) {
-                            Status.LOADING -> {
+                        when (resource) {
+                            CoinResource.Loading -> {
                                 showLoading()
                                 isContentVisible = false
                             }
 
-                            Status.SUCCESS -> {
+                            is CoinResource.Success -> {
                                 hideLoading()
                                 coins.replaceAll(resource.data.orEmpty())
                                 isContentVisible = true
                             }
 
-                            Status.ERROR -> {
+                            is CoinResource.Error -> {
                                 hideLoading()
                                 showError(getString(R.string.some_error))
                             }

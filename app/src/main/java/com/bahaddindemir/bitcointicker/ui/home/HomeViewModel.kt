@@ -7,6 +7,7 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val coinRepository: CoinRepository) : ViewModel() {
-    private val coinListPage = MutableStateFlow(1)
+    private val coinListPage = MutableSharedFlow<Int>(replay = 1)
     private val searchKeyCoin = MutableStateFlow("")
 
     val coinState: StateFlow<CoinResource<List<CoinItem>>> = coinListPage
@@ -43,7 +44,7 @@ class HomeViewModel @Inject constructor(private val coinRepository: CoinReposito
         )
 
     fun postCoinsMarketsPage(page: Int) {
-        coinListPage.value = page
+        coinListPage.tryEmit(page)
     }
 
     fun postSearchCoinsMarketsPage(searchKey: String) {

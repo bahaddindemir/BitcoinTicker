@@ -9,11 +9,9 @@ import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -22,10 +20,9 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DetailViewModel @Inject constructor(private val coinRepository: CoinRepository) : ViewModel() {
-    private val coinItem = MutableStateFlow<String?>(null)
+    private val coinItem = MutableSharedFlow<String>(replay = 1)
 
     val coinDetailState: StateFlow<CoinResource<CoinDetailItem>> = coinItem
-        .filterNotNull()
         .flatMapLatest { coinItemId -> coinRepository.loadCoinDetail(coinItemId) }
         .stateIn(
             scope = viewModelScope,
@@ -62,6 +59,6 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
         coinRepository.updateFavoriteCoin(coinDetailItem)
 
     fun setCoinDetailId(coinItemId: String) {
-        coinItem.value = coinItemId
+        coinItem.tryEmit(coinItemId)
     }
 }

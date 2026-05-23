@@ -8,8 +8,7 @@
     <fragment
         android:id="@+id/splash_fragment"
         android:name="com.bahaddindemir.bitcointicker.ui.splash.SplashFragment"
-        android:label="SplashFragment"
-        tools:layout="@layout/fragment_splash">
+        android:label="SplashFragment">
 
         <action
             android:id="@+id/action_splash_fragment_to_login_fragment"

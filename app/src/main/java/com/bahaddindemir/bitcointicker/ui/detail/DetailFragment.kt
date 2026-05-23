@@ -52,6 +52,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.Status
@@ -73,6 +76,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -171,9 +175,13 @@ class DetailFragment : Fragment() {
     }
 
     private fun observeFavoriteResponse() {
-        viewModel.successResponse.observe(viewLifecycleOwner) {
-            if (it) handleFavoriteButton()
-            else showError(getString(R.string.some_error))
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.successResponse.collect {
+                    if (it) handleFavoriteButton()
+                    else showError(getString(R.string.some_error))
+                }
+            }
         }
     }
 

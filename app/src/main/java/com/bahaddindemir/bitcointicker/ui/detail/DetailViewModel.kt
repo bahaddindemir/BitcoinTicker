@@ -4,13 +4,14 @@ import androidx.lifecycle.*
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
-import com.bahaddindemir.bitcointicker.util.SingleLiveEvent
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +28,8 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
             launchOnViewModelScope { this.coinRepository.loadCoinDetail(coinItem) }
         }
 
-    val successResponse = SingleLiveEvent<Boolean>()
+    private val _successResponse = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    val successResponse = _successResponse.asSharedFlow()
     private val disposables = CompositeDisposable()
 
     fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
@@ -35,9 +37,9 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
                                        .subscribeOn(Schedulers.io())
                                        .observeOn(AndroidSchedulers.mainThread())
                                        .subscribe({
-                                           successResponse.value = true
+                                           _successResponse.tryEmit(true)
                                        }, {
-                                           successResponse.value = false
+                                           _successResponse.tryEmit(false)
                                        })
         disposables.add(disposable)
     }
@@ -47,9 +49,9 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
                                        .subscribeOn(Schedulers.io())
                                        .observeOn(AndroidSchedulers.mainThread())
                                        .subscribe({
-                                           successResponse.value = true
+                                           _successResponse.tryEmit(true)
                                        }, {
-                                           successResponse.value = false
+                                           _successResponse.tryEmit(false)
                                        })
         disposables.add(disposable)
     }

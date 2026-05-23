@@ -8,9 +8,10 @@ import com.bahaddindemir.bitcointicker.util.AuthUseCase
 import com.bahaddindemir.bitcointicker.data.model.Resource
 import com.bahaddindemir.bitcointicker.data.repository.auth.AuthRepository
 import com.bahaddindemir.bitcointicker.util.AppPreferences
-import com.bahaddindemir.bitcointicker.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -28,8 +29,11 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     private val _authResponse = MutableStateFlow<Any>(Resource.Default)
     val authResponse = _authResponse
 
-    val validationException = SingleLiveEvent<Int>()
-    val successResponse = SingleLiveEvent<Boolean>()
+    private val _validationException = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+    val validationException = _validationException.asSharedFlow()
+
+    private val _successResponse = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    val successResponse = _successResponse.asSharedFlow()
 
     private val disposable = CompositeDisposable()
 
@@ -54,9 +58,9 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
                           .observeOn(AndroidSchedulers.mainThread())
                           .subscribe({
                               appPreferences.isLoggedIn = true
-                              successResponse.value = true
+                              _successResponse.tryEmit(true)
                           }, {
-                              successResponse.value = false
+                              _successResponse.tryEmit(false)
                               Log.w(this.toString(), it.message!!)
                           })
         )
@@ -69,9 +73,9 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
                           .observeOn(AndroidSchedulers.mainThread())
                           .subscribe({
                               appPreferences.isLoggedIn = true
-                              successResponse.value = true
+                              _successResponse.tryEmit(true)
                           }, {
-                              successResponse.value = false
+                              _successResponse.tryEmit(false)
                               Log.w(this.toString(), it.message!!)
                           })
         )
@@ -79,7 +83,9 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
 
     private fun authUseCase() {
         authUseCase(request)
-            .catch { exception -> validationException.value = exception.message?.toInt() }
+            .catch { exception ->
+                exception.message?.toIntOrNull()?.let { _validationException.emit(it) }
+            }
             .onEach { result -> _authResponse.value = result }
             .launchIn(viewModelScope)
     }

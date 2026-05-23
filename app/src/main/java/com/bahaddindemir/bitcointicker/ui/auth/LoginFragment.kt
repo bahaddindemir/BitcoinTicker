@@ -96,42 +96,48 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.successResponse.observe(viewLifecycleOwner) {
-            if (it) {
-                hideLoading()
-                openHome()
-            } else {
-                hideLoading()
-                showError(resources.getString(R.string.some_error))
-            }
-        }
-
-        viewModel.validationException.observe(viewLifecycleOwner) {
-            when (it) {
-                AuthFieldsValidation.EMPTY_EMAIL.value -> {
-                    focusTarget = LoginFocusTarget.Email
-                    showError(resources.getString(R.string.empty_email))
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                launch {
+                    viewModel.successResponse.collect {
+                        if (it) {
+                            hideLoading()
+                            openHome()
+                        } else {
+                            hideLoading()
+                            showError(resources.getString(R.string.some_error))
+                        }
+                    }
                 }
 
-                AuthFieldsValidation.INVALID_EMAIL.value -> {
-                    focusTarget = LoginFocusTarget.Email
-                    showError(resources.getString(R.string.invalid_email))
+                launch {
+                    viewModel.validationException.collect {
+                        when (it) {
+                            AuthFieldsValidation.EMPTY_EMAIL.value -> {
+                                focusTarget = LoginFocusTarget.Email
+                                showError(resources.getString(R.string.empty_email))
+                            }
+
+                            AuthFieldsValidation.INVALID_EMAIL.value -> {
+                                focusTarget = LoginFocusTarget.Email
+                                showError(resources.getString(R.string.invalid_email))
+                            }
+
+                            AuthFieldsValidation.EMPTY_PASSWORD.value -> {
+                                focusTarget = LoginFocusTarget.Password
+                                showError(resources.getString(R.string.empty_password))
+                            }
+                        }
+                    }
                 }
 
-                AuthFieldsValidation.EMPTY_PASSWORD.value -> {
-                    focusTarget = LoginFocusTarget.Password
-                    showError(resources.getString(R.string.empty_password))
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.authResponse.collect {
-                    when (it) {
-                        Resource.Loading -> {
-                            hideKeyboard()
-                            showLoading()
+                launch {
+                    viewModel.authResponse.collect {
+                        when (it) {
+                            Resource.Loading -> {
+                                hideKeyboard()
+                                showLoading()
+                            }
                         }
                     }
                 }

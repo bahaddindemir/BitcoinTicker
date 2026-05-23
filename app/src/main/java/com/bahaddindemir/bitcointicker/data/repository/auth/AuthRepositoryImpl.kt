@@ -7,11 +7,9 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(private val remoteDataSource: AuthRemoteDataSource) :
     AuthRepository {
 
-    override
-    fun login(request: AuthRequest) = remoteDataSource.login(request)
+    override suspend fun login(request: AuthRequest) = remoteDataSource.login(request)
 
-    override
-    fun register(request: AuthRequest) = remoteDataSource.register(request)
+    override suspend fun register(request: AuthRequest) = remoteDataSource.register(request)
 
     override
     fun logout() = remoteDataSource.logout()

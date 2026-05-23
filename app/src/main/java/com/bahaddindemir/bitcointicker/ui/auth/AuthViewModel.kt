@@ -15,10 +15,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
@@ -35,8 +33,6 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     private val _successResponse = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     val successResponse = _successResponse.asSharedFlow()
 
-    private val disposable = CompositeDisposable()
-
     val user by lazy {
         authRepository.currentUser()
     }
@@ -52,33 +48,29 @@ class AuthViewModel @Inject constructor(private val authUseCase: AuthUseCase,
     }
 
     private fun login() {
-        disposable.add(
-            authRepository.login(request)
-                          .subscribeOn(Schedulers.io())
-                          .observeOn(AndroidSchedulers.mainThread())
-                          .subscribe({
-                              appPreferences.isLoggedIn = true
-                              _successResponse.tryEmit(true)
-                          }, {
-                              _successResponse.tryEmit(false)
-                              Log.w(this.toString(), it.message!!)
-                          })
-        )
+        viewModelScope.launch {
+            try {
+                authRepository.login(request)
+                appPreferences.isLoggedIn = true
+                _successResponse.emit(true)
+            } catch (exception: Exception) {
+                _successResponse.emit(false)
+                Log.w(this.toString(), exception.message.orEmpty())
+            }
+        }
     }
 
     private fun signup() {
-        disposable.add(
-            authRepository.register(request)
-                          .subscribeOn(Schedulers.io())
-                          .observeOn(AndroidSchedulers.mainThread())
-                          .subscribe({
-                              appPreferences.isLoggedIn = true
-                              _successResponse.tryEmit(true)
-                          }, {
-                              _successResponse.tryEmit(false)
-                              Log.w(this.toString(), it.message!!)
-                          })
-        )
+        viewModelScope.launch {
+            try {
+                authRepository.register(request)
+                appPreferences.isLoggedIn = true
+                _successResponse.emit(true)
+            } catch (exception: Exception) {
+                _successResponse.emit(false)
+                Log.w(this.toString(), exception.message.orEmpty())
+            }
+        }
     }
 
     private fun authUseCase() {

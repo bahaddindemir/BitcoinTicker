@@ -37,9 +37,8 @@ viewModelCompose = "2.10.0"
 googleService = "4.4.4"
 firebaseBom = "34.13.0"
 
-# Rx java Android
-rxJava = "3.1.12"
-rxAndroid = "3.0.2"
+# Coroutines
+coroutines = "1.11.0"
 
 # Room
 room = "2.8.4"
@@ -100,15 +99,13 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 
-# RxJava
-rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxJava" }
-rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxAndroid" }
+# Coroutines
+coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 
 # Room
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-room-rxjava = { module = "androidx.room:room-rxjava3", version.ref = "room" }
 
 # Lifecycle
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }

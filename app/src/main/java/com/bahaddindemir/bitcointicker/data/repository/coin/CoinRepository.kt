@@ -4,7 +4,6 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.google.firebase.auth.FirebaseUser
-import io.reactivex.rxjava3.core.Completable
 import kotlinx.coroutines.flow.Flow
 
 interface CoinRepository {
@@ -16,9 +15,9 @@ interface CoinRepository {
 
     fun loadFavoriteCoins(): Flow<List<CoinDetailItem>>
 
-    fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) : Completable
+    suspend fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem)
 
-    fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) : Completable
+    suspend fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem)
 
     fun updateFavoriteCoin(coinDetailItem: CoinDetailItem)
 

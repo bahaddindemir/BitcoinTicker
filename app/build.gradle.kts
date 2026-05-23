@@ -56,15 +56,11 @@ dependencies {
   implementation(platform(libs.firebase.bom))
   implementation(libs.firebase.analytics)
   implementation(libs.firebase.auth)
-
-  // RX Java Android
-  implementation(libs.rxjava)
-  implementation(libs.rxandroid)
+  implementation(libs.coroutines.play.services)
 
   // Room
   implementation(libs.room.ktx)
   implementation(libs.room.runtime)
-  implementation(libs.room.rxjava)
   ksp(libs.room.compiler)
 
   // LiveData ViewModel

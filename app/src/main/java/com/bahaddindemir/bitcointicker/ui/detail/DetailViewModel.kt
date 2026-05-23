@@ -7,9 +7,6 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +16,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -37,30 +35,27 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
 
     private val _successResponse = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     val successResponse = _successResponse.asSharedFlow()
-    private val disposables = CompositeDisposable()
 
     fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
-        val disposable = coinRepository.addFavoriteCoin(firebaseUser, coinDetailItem)
-                                       .subscribeOn(Schedulers.io())
-                                       .observeOn(AndroidSchedulers.mainThread())
-                                       .subscribe({
-                                           _successResponse.tryEmit(true)
-                                       }, {
-                                           _successResponse.tryEmit(false)
-                                       })
-        disposables.add(disposable)
+        viewModelScope.launch {
+            try {
+                coinRepository.addFavoriteCoin(firebaseUser, coinDetailItem)
+                _successResponse.emit(true)
+            } catch (_: Exception) {
+                _successResponse.emit(false)
+            }
+        }
     }
 
     fun onDeleteFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
-        val disposable = coinRepository.deleteFavoriteCoin(firebaseUser, coinDetailItem)
-                                       .subscribeOn(Schedulers.io())
-                                       .observeOn(AndroidSchedulers.mainThread())
-                                       .subscribe({
-                                           _successResponse.tryEmit(true)
-                                       }, {
-                                           _successResponse.tryEmit(false)
-                                       })
-        disposables.add(disposable)
+        viewModelScope.launch {
+            try {
+                coinRepository.deleteFavoriteCoin(firebaseUser, coinDetailItem)
+                _successResponse.emit(true)
+            } catch (_: Exception) {
+                _successResponse.emit(false)
+            }
+        }
     }
 
     fun updateFavoriteCoinDetail(coinDetailItem: CoinDetailItem) =

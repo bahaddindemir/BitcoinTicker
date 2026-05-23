@@ -11,7 +11,6 @@ import com.bahaddindemir.bitcointicker.data.services.ApiService
 import com.bahaddindemir.bitcointicker.data.services.FireStoreSource
 import com.bahaddindemir.bitcointicker.util.AppPreferences
 import com.google.firebase.auth.FirebaseUser
-import io.reactivex.rxjava3.core.Completable
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import java.util.Locale
@@ -86,11 +85,11 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
 
     override fun loadFavoriteCoins(): Flow<List<CoinDetailItem>> = coinDao.getFavoriteCoins()
 
-    override fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem):
-            Completable = fireStore.addCoinToFavorite(firebaseUser, coinDetailItem)
+    override suspend fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
+        fireStore.addCoinToFavorite(firebaseUser, coinDetailItem)
 
-    override fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem):
-            Completable = fireStore.deleteFavoriteCoin(firebaseUser, coinDetailItem)
+    override suspend fun deleteFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) =
+        fireStore.deleteFavoriteCoin(firebaseUser, coinDetailItem)
 
     override fun updateFavoriteCoin(coinDetailItem: CoinDetailItem) {
         coinDao.updateCoinDetail(coinDetailItem)

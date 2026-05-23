@@ -152,23 +152,27 @@ class DetailFragment : Fragment() {
     }
 
     private fun observeCoinDetailData() {
-        viewModel.coinDetailLiveData.observe(viewLifecycleOwner) { resource ->
-            when (resource.status) {
-                Status.LOADING -> showLoading()
-                Status.SUCCESS -> {
-                    hideLoading()
-                    resource.data?.let {
-                        handleCoinDetailDataOnSuccess(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.coinDetailState.collect { resource ->
+                    when (resource.status) {
+                        Status.LOADING -> showLoading()
+                        Status.SUCCESS -> {
+                            hideLoading()
+                            resource.data?.let {
+                                handleCoinDetailDataOnSuccess(it)
+                            }
+
+                            val msg = Message.obtain()
+                            msg.what = WHAT_MSG
+                            handler.sendMessageDelayed(msg, refreshIntervalTime)
+                        }
+
+                        Status.ERROR -> {
+                            hideLoading()
+                            showError(getString(R.string.some_error))
+                        }
                     }
-
-                    val msg = Message.obtain()
-                    msg.what = WHAT_MSG
-                    handler.sendMessageDelayed(msg, refreshIntervalTime)
-                }
-
-                Status.ERROR -> {
-                    hideLoading()
-                    showError(getString(R.string.some_error))
                 }
             }
         }
@@ -204,7 +208,7 @@ class DetailFragment : Fragment() {
 
     private fun loadCoinDetail(coinItem: CoinItem?) {
         coinItem?.let {
-            viewModel.postCoinDetailId(it.id)
+            viewModel.setCoinDetailId(it.id)
         }
     }
 

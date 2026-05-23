@@ -1,8 +1,6 @@
 package com.bahaddindemir.bitcointicker.data.repository.coin
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.bahaddindemir.bitcointicker.data.local.CoinDao
 import com.bahaddindemir.bitcointicker.data.model.Envelope
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
@@ -14,8 +12,7 @@ import com.bahaddindemir.bitcointicker.data.services.FireStoreSource
 import com.bahaddindemir.bitcointicker.util.AppPreferences
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.core.Completable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import java.util.Locale
 import javax.inject.Inject
@@ -29,9 +26,8 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
 {
     override var isLoading: Boolean = false
 
-    override suspend fun loadCoinDetail(coinItemId: String): LiveData<CoinResource<CoinDetailItem>> =
-        withContext(Dispatchers.IO) {
-            return@withContext object : NetworkBoundRepository<CoinDetailItem, CoinDetailItem>() {
+    override fun loadCoinDetail(coinItemId: String): Flow<CoinResource<CoinDetailItem>> =
+            object : NetworkBoundRepository<CoinDetailItem, CoinDetailItem>() {
                 override fun saveFetchData(items: CoinDetailItem) {
                     items.let {
                         coinDao.updateCoinDetail(it)
@@ -42,7 +38,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     return data == null
                 }
 
-                override fun loadFromDb(): LiveData<CoinDetailItem> {
+                override fun loadFromDb(): Flow<CoinDetailItem?> {
                     return getCoinDetail(coinItemId)
                 }
 
@@ -53,12 +49,10 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 override fun onFetchFailed(envelope: Envelope?) {
                     Log.w(this.toString(),"onFetchFailed : $envelope")
                 }
-            }.asLiveData()
-        }
+            }.asFlow()
 
-    override suspend fun loadCoins(page: Int): LiveData<CoinResource<List<CoinItem>>> =
-        withContext(Dispatchers.IO) {
-            return@withContext object : NetworkBoundRepository<List<CoinItem>, List<CoinItem>>() {
+    override fun loadCoins(page: Int): Flow<CoinResource<List<CoinItem>>> =
+            object : NetworkBoundRepository<List<CoinItem>, List<CoinItem>>() {
                 override fun saveFetchData(items: List<CoinItem>) {
                     items.let {
                         coinDao.insertCoins(it)
@@ -69,7 +63,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     return data.isNullOrEmpty()
                 }
 
-                override fun loadFromDb(): LiveData<List<CoinItem>> {
+                override fun loadFromDb(): Flow<List<CoinItem>?> {
                     return getCoinList()
                 }
 
@@ -88,10 +82,9 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 override fun onFetchFailed(envelope: Envelope?) {
                     Log.w(this.toString(),"onFetchFailed : $envelope")
                 }
-            }.asLiveData()
-        }
+            }.asFlow()
 
-    override suspend fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>> = coinDao.getFavoriteCoins().asLiveData()
+    override fun loadFavoriteCoins(): Flow<List<CoinDetailItem>> = coinDao.getFavoriteCoins()
 
     override fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem):
             Completable = fireStore.addCoinToFavorite(firebaseUser, coinDetailItem)
@@ -106,11 +99,11 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
     //ToDo: Implement get favorites from Firestore
     //fun getMyFavoriteCoinList(firebaseUser: FirebaseUser) = fireStore.getMyCoinFavoriteList(firebaseUser)
 
-    override fun getCoinList() = coinDao.getCoins().asLiveData()
+    override fun getCoinList() = coinDao.getCoins()
 
-    override fun getSearchCoinList(searchKey: String) = coinDao.searchCoins(searchKey).asLiveData()
+    override fun getSearchCoinList(searchKey: String) = coinDao.searchCoins(searchKey)
 
-    override fun getCoinDetail(coinItemId: String) = coinDao.getCoinDetail(coinItemId).asLiveData()
+    override fun getCoinDetail(coinItemId: String) = coinDao.getCoinDetail(coinItemId)
 
     companion object {
         private const val order = "market_cap_desc"

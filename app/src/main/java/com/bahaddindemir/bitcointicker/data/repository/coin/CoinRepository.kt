@@ -1,20 +1,20 @@
 package com.bahaddindemir.bitcointicker.data.repository.coin
 
-import androidx.lifecycle.LiveData
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.core.Completable
+import kotlinx.coroutines.flow.Flow
 
 interface CoinRepository {
     var isLoading: Boolean
 
-    suspend fun loadCoinDetail(coinItemId: String): LiveData<CoinResource<CoinDetailItem>>
+    fun loadCoinDetail(coinItemId: String): Flow<CoinResource<CoinDetailItem>>
 
-    suspend fun loadCoins(page: Int): LiveData<CoinResource<List<CoinItem>>>
+    fun loadCoins(page: Int): Flow<CoinResource<List<CoinItem>>>
 
-    suspend fun loadFavoriteCoins(): LiveData<List<CoinDetailItem>>
+    fun loadFavoriteCoins(): Flow<List<CoinDetailItem>>
 
     fun addFavoriteCoin(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) : Completable
 
@@ -25,9 +25,9 @@ interface CoinRepository {
     //ToDo: Implement get favorites from Firestore
     //fun getMyFavoriteCoinList(firebaseUser: FirebaseUser)
 
-    fun getCoinList() : LiveData<List<CoinItem>>
+    fun getCoinList() : Flow<List<CoinItem>>
 
-    fun getSearchCoinList(searchKey: String) : LiveData<List<CoinItem>>
+    fun getSearchCoinList(searchKey: String) : Flow<List<CoinItem>>
 
-    fun getCoinDetail(coinItemId: String) : LiveData<CoinDetailItem>
+    fun getCoinDetail(coinItemId: String) : Flow<CoinDetailItem?>
 }

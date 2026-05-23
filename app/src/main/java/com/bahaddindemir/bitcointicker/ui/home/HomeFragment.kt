@@ -53,7 +53,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.Status
@@ -67,6 +69,7 @@ import com.bahaddindemir.bitcointicker.extension.priceChangeToText
 import com.bahaddindemir.bitcointicker.extension.showError
 import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -77,7 +80,6 @@ class HomeFragment : Fragment() {
     private var searchText by mutableStateOf("")
     private var isContentVisible by mutableStateOf(false)
     private var progressDialog: Dialog? = null
-    private var searchLiveData: LiveData<List<CoinItem>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,28 +126,39 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        searchLiveData?.removeObservers(viewLifecycleOwner)
         hideLoading()
         super.onDestroyView()
     }
 
     private fun observeCoinsMarketsResource() {
-        viewModel.coinLiveData.observe(viewLifecycleOwner) { resource ->
-            when (resource.status) {
-                Status.LOADING -> {
-                    showLoading()
-                    isContentVisible = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                launch {
+                    viewModel.coinState.collect { resource ->
+                        when (resource.status) {
+                            Status.LOADING -> {
+                                showLoading()
+                                isContentVisible = false
+                            }
+
+                            Status.SUCCESS -> {
+                                hideLoading()
+                                coins.replaceAll(resource.data.orEmpty())
+                                isContentVisible = true
+                            }
+
+                            Status.ERROR -> {
+                                hideLoading()
+                                showError(getString(R.string.some_error))
+                            }
+                        }
+                    }
                 }
 
-                Status.SUCCESS -> {
-                    hideLoading()
-                    coins.replaceAll(resource.data.orEmpty())
-                    isContentVisible = true
-                }
-
-                Status.ERROR -> {
-                    hideLoading()
-                    showError(getString(R.string.some_error))
+                launch {
+                    viewModel.searchCoinState.collect { result ->
+                        coins.replaceAll(result)
+                    }
                 }
             }
         }
@@ -153,15 +166,7 @@ class HomeFragment : Fragment() {
 
     private fun onSearchChanged(value: String) {
         searchText = value.trim()
-        searchLiveData?.removeObservers(viewLifecycleOwner)
-        searchLiveData = if (searchText.isNotEmpty()) {
-            viewModel.postSearchCoinsMarketsPage(searchText)
-        } else {
-            viewModel.postSearchFullCoinsMarketsPage()
-        }
-        searchLiveData?.observe(viewLifecycleOwner) { result ->
-            coins.replaceAll(result.orEmpty())
-        }
+        viewModel.postSearchCoinsMarketsPage(searchText)
     }
 
     private fun closeSearch() {

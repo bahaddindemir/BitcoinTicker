@@ -23,7 +23,7 @@ interface CoinDao {
     fun updateCoinDetail(coinDetailItem: CoinDetailItem)
 
     @Query("SELECT * FROM CoinDetailItem WHERE id = :coinItemId")
-    fun getCoinDetail(coinItemId: String): Flow<CoinDetailItem>
+    fun getCoinDetail(coinItemId: String): Flow<CoinDetailItem?>
 
     @Query("SELECT * FROM CoinDetailItem WHERE isFavorite = 1")
     fun getFavoriteCoins(): Flow<List<CoinDetailItem>>

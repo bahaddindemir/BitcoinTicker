@@ -1,6 +1,7 @@
 package com.bahaddindemir.bitcointicker.ui.detail
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
@@ -9,24 +10,30 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DetailViewModel @Inject constructor(private val coinRepository: CoinRepository) : ViewModel() {
-    private inline fun <T> launchOnViewModelScope(crossinline block: suspend () -> LiveData<T>): LiveData<T> {
-        return liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-            emitSource(block())
-        }
-    }
+    private val coinItem = MutableStateFlow<String?>(null)
 
-    private var coinItem: MutableLiveData<String> = MutableLiveData()
-    var coinDetailLiveData: LiveData<CoinResource<CoinDetailItem>> =
-        this.coinItem.switchMap { coinItem ->
-            launchOnViewModelScope { this.coinRepository.loadCoinDetail(coinItem) }
-        }
+    val coinDetailState: StateFlow<CoinResource<CoinDetailItem>> = coinItem
+        .filterNotNull()
+        .flatMapLatest { coinItemId -> coinRepository.loadCoinDetail(coinItemId) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = CoinResource.loading(null, null)
+        )
 
     private val _successResponse = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     val successResponse = _successResponse.asSharedFlow()
@@ -59,5 +66,7 @@ class DetailViewModel @Inject constructor(private val coinRepository: CoinReposi
     fun updateFavoriteCoinDetail(coinDetailItem: CoinDetailItem) =
         coinRepository.updateFavoriteCoin(coinDetailItem)
 
-    fun postCoinDetailId(coinItemId: String) = this.coinItem.postValue(coinItemId)
+    fun setCoinDetailId(coinItemId: String) {
+        coinItem.value = coinItemId
+    }
 }

@@ -21,9 +21,6 @@
     <string name="search">Search</string>
     <string name="account">Account</string>
 
-    <!-- Intro -->
-    <string name="log_in_sign_up">Log In / Sign Up</string>
-
     <!-- Log In -->
     <string name="log_in">Log In</string>
     <string name="email">Email Address</string>

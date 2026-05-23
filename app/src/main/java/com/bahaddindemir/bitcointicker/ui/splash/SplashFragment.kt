@@ -39,7 +39,6 @@ class SplashFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private val navigateRunnable = Runnable {
         if (isAdded) {
-            //ToDo: Add intro screen if you have time
             if (viewModel.isFirstTime()) {
                 viewModel.setFirstTime()
                 navigateSafe(SplashFragmentDirections.actionSplashFragmentToLoginFragment())

@@ -56,12 +56,12 @@ import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
 import com.bahaddindemir.bitcointicker.data.model.Resource
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
+import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.navigateSafe
 import com.bahaddindemir.bitcointicker.extension.openActivityAndClearStack
 import com.bahaddindemir.bitcointicker.extension.showError
+import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
 import com.bahaddindemir.bitcointicker.ui.main.MainActivity
-import com.bahaddindemir.bitcointicker.util.hideLoadingDialog
-import com.bahaddindemir.bitcointicker.util.showLoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -154,11 +154,11 @@ class LoginFragment : Fragment() {
 
     private fun showLoading() {
         hideLoading()
-        progressDialog = showLoadingDialog(requireActivity(), null)
+        progressDialog = showLoadingDialog()
     }
 
     private fun hideLoading() {
-        hideLoadingDialog(progressDialog, requireActivity())
+        progressDialog.hideLoadingDialog(requireActivity())
         progressDialog = null
     }
 }

@@ -1,6 +1,7 @@
 package com.bahaddindemir.bitcointicker.util
 
 import com.bahaddindemir.bitcointicker.data.model.*
+import com.bahaddindemir.bitcointicker.extension.isValidEmail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

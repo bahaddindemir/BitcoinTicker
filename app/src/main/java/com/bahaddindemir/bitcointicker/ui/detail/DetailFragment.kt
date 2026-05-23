@@ -63,11 +63,11 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
 import com.bahaddindemir.bitcointicker.extension.loadImage
 import com.bahaddindemir.bitcointicker.extension.parcelable
+import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.showError
+import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
 import com.bahaddindemir.bitcointicker.util.AppPreferences
-import com.bahaddindemir.bitcointicker.util.hideLoadingDialog
-import com.bahaddindemir.bitcointicker.util.showLoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -235,11 +235,11 @@ class DetailFragment : Fragment() {
 
     private fun showLoading() {
         hideLoading()
-        progressDialog = showLoadingDialog(requireActivity(), null)
+        progressDialog = showLoadingDialog()
     }
 
     private fun hideLoading() {
-        hideLoadingDialog(progressDialog, requireActivity())
+        progressDialog.hideLoadingDialog(requireActivity())
     }
 }
 

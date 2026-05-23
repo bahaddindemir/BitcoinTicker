@@ -13,27 +13,18 @@ fun View.show() {
     if (isVisible) return
 
     visibility = View.VISIBLE
-    if (this is Group) {
-        this.requestLayout()
-    }
 }
 
 fun View.hide() {
     if (isGone) return
 
     visibility = View.GONE
-    if (this is Group) {
-        this.requestLayout()
-    }
 }
 
 fun View.invisible() {
     if (isInvisible) return
 
     visibility = View.INVISIBLE
-    if (this is Group) {
-        this.requestLayout()
-    }
 }
 
 fun View.enable() {

@@ -59,13 +59,13 @@ import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.Status
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
+import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.isNegative
 import com.bahaddindemir.bitcointicker.extension.loadImage
 import com.bahaddindemir.bitcointicker.extension.marketCapToText
 import com.bahaddindemir.bitcointicker.extension.priceChangeToText
 import com.bahaddindemir.bitcointicker.extension.showError
-import com.bahaddindemir.bitcointicker.util.hideLoadingDialog
-import com.bahaddindemir.bitcointicker.util.showLoadingDialog
+import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -182,10 +182,10 @@ class HomeFragment : Fragment() {
 
     private fun showLoading() {
         hideLoading()
-        progressDialog = showLoadingDialog(requireActivity(), null)
+        progressDialog = showLoadingDialog()
     }
 
-    private fun hideLoading() = hideLoadingDialog(progressDialog, requireActivity())
+    private fun hideLoading() = progressDialog.hideLoadingDialog(requireActivity())
 }
 
 private fun <T> MutableList<T>.replaceAll(items: List<T>) {

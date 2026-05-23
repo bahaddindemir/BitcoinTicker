@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.bahaddindemir.bitcointicker.data.local.CoinDao
-import com.bahaddindemir.bitcointicker.data.model.ApiResponse
 import com.bahaddindemir.bitcointicker.data.model.Envelope
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
@@ -17,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.core.Completable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -46,7 +46,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     return getCoinDetail(coinItemId)
                 }
 
-                override fun fetchService(): LiveData<ApiResponse<CoinDetailItem>> {
+                override suspend fun fetchService(): Response<CoinDetailItem> {
                     return apiService.fetchCoinsDetail(coinItemId)
                 }
 
@@ -73,7 +73,7 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                     return getCoinList()
                 }
 
-                override fun fetchService(): LiveData<ApiResponse<List<CoinItem>>> {
+                override suspend fun fetchService(): Response<List<CoinItem>> {
                     val map = HashMap<String, Any>()
                     val defaultCurrency = appPreferences.defaultCurrency
                     defaultCurrency?.let { map[vsCurrency] = it.lowercase(Locale.ROOT) }

@@ -8,11 +8,17 @@ import androidx.lifecycle.MediatorLiveData
 import com.bahaddindemir.bitcointicker.data.model.ApiResponse
 import com.bahaddindemir.bitcointicker.data.model.Envelope
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 @Suppress("LeakingThis")
 abstract class NetworkBoundRepository<ResultType, RequestType>
 internal constructor() {
     private val result: MediatorLiveData<CoinResource<ResultType>> = MediatorLiveData()
+    private val repositoryScope = CoroutineScope(Dispatchers.Main)
 
     init {
         Log.v(this.toString(),"Injection NetworkBoundRepository")
@@ -32,30 +38,37 @@ internal constructor() {
     }
 
     private fun fetchFromNetwork(loadedFromDB: LiveData<ResultType>) {
-        val apiResponse = fetchService()
+        repositoryScope.launch {
+            val response = withContext(Dispatchers.IO) {
+                try {
+                    ApiResponse(fetchService())
+                } catch (throwable: Throwable) {
+                    ApiResponse(throwable)
+                }
+            }
 
-        result.addSource(apiResponse) { response ->
-            response?.let {
-                when (response.isSuccessful) {
-                    true -> {
-                        response.body?.let {
+            when (response.isSuccessful) {
+                true -> {
+                    response.body?.let {
+                        withContext(Dispatchers.IO) {
                             saveFetchData(it)
-                            val loaded = loadFromDb()
+                        }
+                        val loaded = loadFromDb()
 
-                            result.addSource(loaded) { newData ->
-                                newData?.let {
-                                    setValue(CoinResource.success(newData, response.nextPage))
-                                }
+                        result.addSource(loaded) { newData ->
+                            newData?.let {
+                                setValue(CoinResource.success(newData, response.nextPage))
                             }
                         }
                     }
-                    false -> {
-                        result.removeSource(loadedFromDB)
-                        onFetchFailed(response.envelope)
-                        response.envelope?.let {
-                            result.addSource(loadedFromDB) { newData ->
-                                setValue(CoinResource.error(it.message, newData))
-                            }
+                }
+
+                false -> {
+                    result.removeSource(loadedFromDB)
+                    onFetchFailed(response.envelope)
+                    response.envelope?.let {
+                        result.addSource(loadedFromDB) { newData ->
+                            setValue(CoinResource.error(it.message, newData))
                         }
                     }
                 }
@@ -81,8 +94,8 @@ internal constructor() {
     @MainThread
     protected abstract fun loadFromDb(): LiveData<ResultType>
 
-    @MainThread
-    protected abstract fun fetchService(): LiveData<ApiResponse<RequestType>>
+    @WorkerThread
+    protected abstract suspend fun fetchService(): Response<RequestType>
 
     @MainThread
     protected abstract fun onFetchFailed(envelope: Envelope?)

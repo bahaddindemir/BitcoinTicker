@@ -38,6 +38,7 @@ dependencies {
 
   // Hilt
   implementation(libs.hilt.android)
+  implementation(libs.hilt.lifecycle.viewmodel.compose)
   ksp(libs.hilt.compiler)
 
   // Networking
@@ -71,5 +72,4 @@ dependencies {
 
   // FireStore
   implementation(libs.firebase.firestore)
-
 }

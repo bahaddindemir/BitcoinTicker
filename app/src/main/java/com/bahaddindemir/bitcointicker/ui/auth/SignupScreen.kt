@@ -1,12 +1,7 @@
 package com.bahaddindemir.bitcointicker.ui.auth
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +26,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -46,142 +39,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.bahaddindemir.bitcointicker.R
-import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
-import com.bahaddindemir.bitcointicker.extension.hideKeyboard
-import com.bahaddindemir.bitcointicker.extension.navigateSafe
-import com.bahaddindemir.bitcointicker.extension.openActivityAndClearStack
-import com.bahaddindemir.bitcointicker.extension.showError
-import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
-import com.bahaddindemir.bitcointicker.ui.main.MainActivity
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
-class LoginFragment : Fragment() {
-    private val viewModel: AuthViewModel by viewModels()
-
-    private var focusTarget by mutableStateOf<LoginFocusTarget?>(null)
-    private var isLoading by mutableStateOf(false)
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                LoginScreen(
-                    initialEmail = viewModel.request.email,
-                    initialPassword = viewModel.request.password,
-                    focusTarget = focusTarget,
-                    onFocusHandled = { focusTarget = null },
-                    onEmailChange = { viewModel.request.email = it },
-                    onPasswordChange = { viewModel.request.password = it },
-                    onLoginClick = { viewModel.onLoginClicked() },
-                    onSignupClick = ::openSignUp
-                )
-                LoadingDialog(isVisible = isLoading)
-            }
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                launch {
-                    viewModel.successResponse.collect {
-                        if (it) {
-                            hideLoading()
-                            openHome()
-                        } else {
-                            hideLoading()
-                            showError(resources.getString(R.string.some_error))
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.validationException.collect {
-                        when (it) {
-                            AuthFieldsValidation.EMPTY_EMAIL.value -> {
-                                focusTarget = LoginFocusTarget.Email
-                                showError(resources.getString(R.string.empty_email))
-                            }
-
-                            AuthFieldsValidation.INVALID_EMAIL.value -> {
-                                focusTarget = LoginFocusTarget.Email
-                                showError(resources.getString(R.string.invalid_email))
-                            }
-
-                            AuthFieldsValidation.EMPTY_PASSWORD.value -> {
-                                focusTarget = LoginFocusTarget.Password
-                                showError(resources.getString(R.string.empty_password))
-                            }
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.isLoading.collect { isLoading ->
-                        if (isLoading) {
-                            hideKeyboard()
-                            showLoading()
-                        } else {
-                            hideLoading()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onDestroyView() {
-        hideLoading()
-        super.onDestroyView()
-    }
-
-    private fun openSignUp() {
-        navigateSafe(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
-    }
-
-    private fun openHome() {
-        requireActivity().openActivityAndClearStack(MainActivity::class.java)
-    }
-
-    private fun showLoading() {
-        isLoading = true
-    }
-
-    private fun hideLoading() {
-        isLoading = false
-    }
-}
-
-enum class LoginFocusTarget {
+enum class SignupFocusTarget {
     Email,
     Password
 }
 
-const val LOGIN_EMAIL_FIELD_TAG = "login_email_field"
-const val LOGIN_PASSWORD_FIELD_TAG = "login_password_field"
+const val SIGNUP_EMAIL_FIELD_TAG = "signup_email_field"
+const val SIGNUP_PASSWORD_FIELD_TAG = "signup_password_field"
 
 @Composable
-fun LoginScreen(
+fun SignupScreen(
     initialEmail: String,
     initialPassword: String,
-    focusTarget: LoginFocusTarget?,
+    focusTarget: SignupFocusTarget?,
     onFocusHandled: () -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onLoginClick: () -> Unit,
     onSignupClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -195,8 +70,8 @@ fun LoginScreen(
 
     LaunchedEffect(focusTarget) {
         when (focusTarget) {
-            LoginFocusTarget.Email -> emailFocusRequester.requestFocus()
-            LoginFocusTarget.Password -> passwordFocusRequester.requestFocus()
+            SignupFocusTarget.Email -> emailFocusRequester.requestFocus()
+            SignupFocusTarget.Password -> passwordFocusRequester.requestFocus()
             null -> return@LaunchedEffect
         }
         keyboardController?.show()
@@ -215,23 +90,23 @@ fun LoginScreen(
     ) {
         Text(
             modifier = Modifier.padding(top = 50.dp),
-            text = stringResource(id = R.string.welcome).uppercase(),
+            text = stringResource(id = R.string.register).uppercase(),
             color = Color.White,
             fontSize = 24.sp,
             textAlign = TextAlign.Center
         )
 
-        LoginFieldLabel(
+        SignupFieldLabel(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, top = 50.dp),
             text = stringResource(id = R.string.email).uppercase()
         )
-        LoginTextField(
+        SignupTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, top = 10.dp, end = 20.dp)
-                .testTag(LOGIN_EMAIL_FIELD_TAG)
+                .testTag(SIGNUP_EMAIL_FIELD_TAG)
                 .focusRequester(emailFocusRequester),
             value = email,
             hint = stringResource(id = R.string.email),
@@ -244,17 +119,17 @@ fun LoginScreen(
             onNext = { passwordFocusRequester.requestFocus() }
         )
 
-        LoginFieldLabel(
+        SignupFieldLabel(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, top = 50.dp),
             text = stringResource(id = R.string.password).uppercase()
         )
-        LoginTextField(
+        SignupTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, top = 10.dp, end = 20.dp)
-                .testTag(LOGIN_PASSWORD_FIELD_TAG)
+                .testTag(SIGNUP_PASSWORD_FIELD_TAG)
                 .focusRequester(passwordFocusRequester),
             value = password,
             hint = stringResource(id = R.string.password),
@@ -265,41 +140,21 @@ fun LoginScreen(
                 password = it
                 onPasswordChange(it)
             },
-            onDone = onLoginClick
+            onDone = onSignupClick
         )
 
-        LoginActionButton(
+        SignupActionButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 50.dp, top = 80.dp, end = 50.dp),
-            text = stringResource(id = R.string.log_in).uppercase(),
-            onClick = onLoginClick
+            text = stringResource(id = R.string.sign_up).uppercase(),
+            onClick = onSignupClick
         )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, top = 50.dp, end = 20.dp)
-                .height(40.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = onSignupClick
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.log_in_to_sign_up).uppercase(),
-                color = colorResource(id = R.color.gray),
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center
-            )
-        }
     }
 }
 
 @Composable
-private fun LoginFieldLabel(
+private fun SignupFieldLabel(
     text: String,
     modifier: Modifier = Modifier
 ) {
@@ -312,7 +167,7 @@ private fun LoginFieldLabel(
 }
 
 @Composable
-private fun LoginTextField(
+private fun SignupTextField(
     value: String,
     hint: String,
     keyboardType: KeyboardType,
@@ -367,7 +222,7 @@ private fun LoginTextField(
 }
 
 @Composable
-private fun LoginActionButton(
+private fun SignupActionButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -393,15 +248,14 @@ private fun LoginActionButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun LoginScreenPreview() {
-    LoginScreen(
+private fun SignupScreenPreview() {
+    SignupScreen(
         initialEmail = "",
         initialPassword = "",
         focusTarget = null,
         onFocusHandled = {},
         onEmailChange = {},
         onPasswordChange = {},
-        onLoginClick = {},
         onSignupClick = {}
     )
 }

@@ -22,8 +22,6 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                                             private val apiService: ApiService,
                                             private val appPreferences: AppPreferences) : CoinRepository
 {
-    override var isLoading: Boolean = false
-
     override fun loadCoinDetail(coinItemId: String): Flow<CoinResource<CoinDetailItem>> =
             object : NetworkBoundRepository<CoinDetailItem, CoinDetailItem>() {
                 override fun saveFetchData(items: CoinDetailItem) {
@@ -68,12 +66,12 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                 override suspend fun fetchService(): Response<List<CoinItem>> {
                     val map = HashMap<String, Any>()
                     val defaultCurrency = appPreferences.defaultCurrency
-                    defaultCurrency?.let { map[vsCurrency] = it.lowercase(Locale.ROOT) }
-                    map[order] = order
-                    map[pageMap] = page
-                    map[perPage] = "20"
-                    map[sparkline] = false
-                    map[priceChangePercentage] = "24h"
+                    defaultCurrency?.let { map[VS_CURRENCY] = it.lowercase(Locale.ROOT) }
+                    map[ORDER] = ORDER_MARKET_CAP_DESC
+                    map[PAGE] = page
+                    map[PER_PAGE] = PAGE_SIZE.toString()
+                    map[SPARKLINE] = false
+                    map[PRICE_CHANGE_PERCENTAGE] = PRICE_CHANGE_24H
                     return apiService.fetchCoins(map)
                 }
 
@@ -104,11 +102,14 @@ class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
     override fun getCoinDetail(coinItemId: String) = coinDao.getCoinDetail(coinItemId)
 
     companion object {
-        private const val order = "market_cap_desc"
-        private const val pageMap = "page"
-        const val perPage = "per_page"
-        const val sparkline = "sparkline"
-        const val vsCurrency = "vs_currency"
-        const val priceChangePercentage = "price_change_percentage"
+       private const val ORDER = "order"
+        private const val ORDER_MARKET_CAP_DESC = "market_cap_desc"
+        private const val PAGE = "page"
+        private const val PAGE_SIZE = 20
+        private const val PER_PAGE = "per_page"
+        private const val SPARKLINE = "sparkline"
+        private const val VS_CURRENCY = "vs_currency"
+        private const val PRICE_CHANGE_PERCENTAGE = "price_change_percentage"
+        private const val PRICE_CHANGE_24H = "24h"
     }
 }

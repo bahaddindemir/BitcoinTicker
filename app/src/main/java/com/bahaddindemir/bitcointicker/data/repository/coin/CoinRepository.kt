@@ -7,8 +7,6 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 
 interface CoinRepository {
-    var isLoading: Boolean
-
     fun loadCoinDetail(coinItemId: String): Flow<CoinResource<CoinDetailItem>>
 
     fun loadCoins(page: Int): Flow<CoinResource<List<CoinItem>>>

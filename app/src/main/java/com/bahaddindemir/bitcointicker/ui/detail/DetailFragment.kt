@@ -8,7 +8,6 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -64,13 +64,13 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinLocalization
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
-import com.bahaddindemir.bitcointicker.extension.loadImage
-import com.bahaddindemir.bitcointicker.extension.parcelable
 import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
+import com.bahaddindemir.bitcointicker.extension.parcelable
 import com.bahaddindemir.bitcointicker.extension.showError
 import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
 import com.bahaddindemir.bitcointicker.util.AppPreferences
+import coil3.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -361,18 +361,13 @@ private fun CoinLogo(
     imageUrl: String?,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
-    AndroidView(
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = null,
         modifier = modifier.size(36.dp),
-        factory = {
-            ImageView(context).apply {
-                scaleType = ImageView.ScaleType.FIT_CENTER
-            }
-        },
-        update = { imageView ->
-            imageView.loadImage(imageUrl)
-        }
+        error = painterResource(id = R.drawable.ic_fg),
+        fallback = painterResource(id = R.drawable.ic_fg),
+        contentScale = ContentScale.Fit
     )
 }
 

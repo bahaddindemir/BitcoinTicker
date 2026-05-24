@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,16 +25,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -46,7 +45,7 @@ import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinImage
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
-import com.bahaddindemir.bitcointicker.extension.loadImage
+import coil3.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -188,19 +187,13 @@ private fun CoinImage(
     contentDescription: String?,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
-    AndroidView(
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = contentDescription,
         modifier = modifier.size(48.dp),
-        factory = {
-            ImageView(context).apply {
-                scaleType = ImageView.ScaleType.FIT_CENTER
-            }
-        },
-        update = { imageView ->
-            imageView.contentDescription = contentDescription
-            imageView.loadImage(imageUrl)
-        }
+        error = painterResource(id = R.drawable.ic_fg),
+        fallback = painterResource(id = R.drawable.ic_fg),
+        contentScale = ContentScale.Fit
     )
 }
 

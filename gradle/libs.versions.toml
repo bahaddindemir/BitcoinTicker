@@ -32,6 +32,7 @@ espresso = "3.7.0"
 composeBom = "2026.05.01"
 activityCompose = "1.13.0"
 viewModelCompose = "2.10.0"
+coil = "3.4.0"
 
 # Firebase
 googleService = "4.4.4"
@@ -45,9 +46,6 @@ room = "2.8.4"
 
 # LiveData ViewModel
 lifecycle = "2.10.0"
-
-# Glide
-glide = "5.0.7"
 
 [libraries]
 # Core
@@ -92,6 +90,8 @@ compose-animation = { module = "androidx.compose.animation:animation" }
 compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -110,10 +110,6 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 # Lifecycle
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-livedata = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
-
-# Glide
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
 
 android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }

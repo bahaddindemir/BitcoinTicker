@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,10 +33,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
@@ -50,7 +49,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -63,11 +61,11 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
 import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.isNegative
-import com.bahaddindemir.bitcointicker.extension.loadImage
 import com.bahaddindemir.bitcointicker.extension.marketCapToText
 import com.bahaddindemir.bitcointicker.extension.priceChangeToText
 import com.bahaddindemir.bitcointicker.extension.showError
 import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
+import coil3.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -494,19 +492,13 @@ private fun CoinImage(
     contentDescription: String?,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
-    AndroidView(
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = contentDescription,
         modifier = modifier,
-        factory = {
-            ImageView(context).apply {
-                scaleType = ImageView.ScaleType.FIT_CENTER
-            }
-        },
-        update = { imageView ->
-            imageView.contentDescription = contentDescription
-            imageView.loadImage(imageUrl)
-        }
+        error = painterResource(id = R.drawable.ic_fg),
+        fallback = painterResource(id = R.drawable.ic_fg),
+        contentScale = ContentScale.Fit
     )
 }
 

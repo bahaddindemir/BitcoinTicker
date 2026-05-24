@@ -32,6 +32,8 @@ dependencies {
   implementation(libs.compose.animation)
   implementation(libs.compose.preview)
   implementation(libs.compose.ui)
+  implementation(libs.coil.compose)
+  implementation(libs.coil.network.okhttp)
   debugImplementation(libs.compose.ui.tooling)
 
   // Hilt
@@ -70,7 +72,4 @@ dependencies {
   // FireStore
   implementation(libs.firebase.firestore)
 
-  // Glide
-  implementation(libs.glide)
-  ksp(libs.glide.ksp)
 }

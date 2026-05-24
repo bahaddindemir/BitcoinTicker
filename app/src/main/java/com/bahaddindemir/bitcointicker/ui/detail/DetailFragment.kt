@@ -1,6 +1,5 @@
 package com.bahaddindemir.bitcointicker.ui.detail
 
-import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -64,11 +63,10 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinLocalization
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
-import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.parcelable
 import com.bahaddindemir.bitcointicker.extension.showError
-import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
+import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import com.bahaddindemir.bitcointicker.util.AppPreferences
 import coil3.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,13 +84,13 @@ class DetailFragment : Fragment() {
     private lateinit var coinItem: CoinItem
     private var refreshIntervalTime: Long = 2000L
     private var confirmIntervalTime: Long = 0L
-    private var progressDialog: Dialog? = null
 
     private var coinDetailItem by mutableStateOf<CoinDetailItem?>(null)
     private var coinTitle by mutableStateOf("")
     private var intervalText by mutableStateOf(refreshIntervalTime.toString())
     private var isFavoriteCoin by mutableStateOf(false)
     private var lastUpdatedDate by mutableStateOf("")
+    private var isLoading by mutableStateOf(false)
 
     @Inject
     lateinit var appPreferences: AppPreferences
@@ -132,6 +130,7 @@ class DetailFragment : Fragment() {
                         findNavController().popBackStack()
                     }
                 )
+                LoadingDialog(isVisible = isLoading)
             }
         }
     }
@@ -246,12 +245,11 @@ class DetailFragment : Fragment() {
     }
 
     private fun showLoading() {
-        hideLoading()
-        progressDialog = showLoadingDialog()
+        isLoading = true
     }
 
     private fun hideLoading() {
-        progressDialog.hideLoadingDialog(requireActivity())
+        isLoading = false
     }
 }
 

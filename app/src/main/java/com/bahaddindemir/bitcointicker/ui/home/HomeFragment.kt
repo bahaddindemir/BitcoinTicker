@@ -1,6 +1,5 @@
 package com.bahaddindemir.bitcointicker.ui.home
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -59,12 +58,11 @@ import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
-import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.isNegative
 import com.bahaddindemir.bitcointicker.extension.marketCapToText
 import com.bahaddindemir.bitcointicker.extension.priceChangeToText
 import com.bahaddindemir.bitcointicker.extension.showError
-import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
+import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import coil3.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -77,7 +75,7 @@ class HomeFragment : Fragment() {
     private var isSearchVisible by mutableStateOf(false)
     private var searchText by mutableStateOf("")
     private var isContentVisible by mutableStateOf(false)
-    private var progressDialog: Dialog? = null
+    private var isLoading by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +111,7 @@ class HomeFragment : Fragment() {
                         navigateToDetail(coinItem, this)
                     }
                 )
+                LoadingDialog(isVisible = isLoading)
             }
         }
     }
@@ -184,11 +183,12 @@ class HomeFragment : Fragment() {
     private fun loadCoinsMarkets(page: Int) = viewModel.postCoinsMarketsPage(page)
 
     private fun showLoading() {
-        hideLoading()
-        progressDialog = showLoadingDialog()
+        isLoading = true
     }
 
-    private fun hideLoading() = progressDialog.hideLoadingDialog(requireActivity())
+    private fun hideLoading() {
+        isLoading = false
+    }
 }
 
 private fun <T> MutableList<T>.replaceAll(items: List<T>) {

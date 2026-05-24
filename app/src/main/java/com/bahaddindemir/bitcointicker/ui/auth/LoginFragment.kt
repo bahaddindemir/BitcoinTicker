@@ -1,6 +1,5 @@
 package com.bahaddindemir.bitcointicker.ui.auth
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -55,11 +54,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
 import com.bahaddindemir.bitcointicker.extension.hideKeyboard
-import com.bahaddindemir.bitcointicker.extension.hideLoadingDialog
 import com.bahaddindemir.bitcointicker.extension.navigateSafe
 import com.bahaddindemir.bitcointicker.extension.openActivityAndClearStack
 import com.bahaddindemir.bitcointicker.extension.showError
-import com.bahaddindemir.bitcointicker.extension.showLoadingDialog
+import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import com.bahaddindemir.bitcointicker.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -69,7 +67,7 @@ class LoginFragment : Fragment() {
     private val viewModel: AuthViewModel by viewModels()
 
     private var focusTarget by mutableStateOf<LoginFocusTarget?>(null)
-    private var progressDialog: Dialog? = null
+    private var isLoading by mutableStateOf(false)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,6 +87,7 @@ class LoginFragment : Fragment() {
                     onLoginClick = { viewModel.onLoginClicked() },
                     onSignupClick = ::openSignUp
                 )
+                LoadingDialog(isVisible = isLoading)
             }
         }
     }
@@ -158,13 +157,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun showLoading() {
-        hideLoading()
-        progressDialog = showLoadingDialog()
+        isLoading = true
     }
 
     private fun hideLoading() {
-        progressDialog.hideLoadingDialog(requireActivity())
-        progressDialog = null
+        isLoading = false
     }
 }
 

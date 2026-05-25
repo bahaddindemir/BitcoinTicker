@@ -1,6 +1,0 @@
-<resources>
-    <style name="Theme.BitcoinTicker" parent="@android:style/Theme.Material.NoActionBar">
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="android:statusBarColor">@color/purple_700</item>
-    </style>
-</resources>

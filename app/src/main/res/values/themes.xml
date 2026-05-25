@@ -1,18 +1,5 @@
 <resources>
-    <style name="Theme.BitcoinTicker" parent="@android:style/Theme.Material.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="android:statusBarColor" >@color/purple_700</item>
-    </style>
-
     <style name="DefaultThemeNoActionBar" parent="@android:style/Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="colorPrimary">@color/splash</item>
-        <item name="colorPrimaryDark">@color/splash</item>
-        <item name="colorAccent">@color/splash_accent</item>
-        <item name="android:statusBarColor">@color/splash_accent</item>
-    </style>
-
-    <style name="SplashTheme" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="colorPrimary">@color/splash</item>
         <item name="colorPrimaryDark">@color/splash</item>

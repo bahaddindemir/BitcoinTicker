@@ -11,10 +11,6 @@ plugins {
 
 dependencies {
   implementation(libs.core.ktx)
-  implementation(libs.appcompat)
-  implementation(libs.material)
-  implementation(libs.constraint.layout)
-  implementation(libs.recyclerview)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.junit.ext)
@@ -61,9 +57,8 @@ dependencies {
   implementation(libs.room.runtime)
   ksp(libs.room.compiler)
 
-  // LiveData ViewModel
+  // ViewModel
   implementation(libs.lifecycle.viewmodel)
-  implementation(libs.lifecycle.livedata)
 
   // FireStore
   implementation(libs.firebase.firestore)

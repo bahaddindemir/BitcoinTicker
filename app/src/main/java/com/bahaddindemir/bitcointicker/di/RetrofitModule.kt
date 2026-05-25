@@ -3,6 +3,7 @@ package com.bahaddindemir.bitcointicker.di
 import com.bahaddindemir.bitcointicker.BuildConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.Strictness
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,7 @@ object RetrofitModule {
     @Singleton
     fun provideGson(): Gson {
         return GsonBuilder()
-            .setLenient()
+            .setStrictness(Strictness.LENIENT)
             .serializeNulls() // To allow sending null values
             .create()
     }

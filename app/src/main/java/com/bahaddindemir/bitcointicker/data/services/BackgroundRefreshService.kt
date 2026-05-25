@@ -21,7 +21,7 @@ class BackgroundRefreshService : Service() {
                 startForeground(1, notification)
             }
         } else {
-            stopForeground(true)
+            stopForeground(STOP_FOREGROUND_REMOVE)
         }
         return START_NOT_STICKY
     }

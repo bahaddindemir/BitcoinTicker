@@ -14,7 +14,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
       defaultConfig {
         applicationId = "com.bahaddindemir.bitcointicker"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1"

@@ -4,7 +4,6 @@ plugins {
   alias(libs.plugins.compose.compiler) apply false
   alias(libs.plugins.hilt) apply false
   alias(libs.plugins.google.services) apply false
-  alias(libs.plugins.navigation.safe.args) apply false
   alias(libs.plugins.ksp) apply false
 }
 

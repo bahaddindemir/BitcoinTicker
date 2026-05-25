@@ -1,10 +1,6 @@
 package com.bahaddindemir.bitcointicker.ui.home
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,15 +25,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,147 +44,93 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
+import androidx.compose.material3.SnackbarHostState
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
-import com.bahaddindemir.bitcointicker.extension.hideKeyboard
 import com.bahaddindemir.bitcointicker.extension.isNegative
 import com.bahaddindemir.bitcointicker.extension.marketCapToText
 import com.bahaddindemir.bitcointicker.extension.priceChangeToText
-import com.bahaddindemir.bitcointicker.extension.showError
 import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import coil3.compose.AsyncImage
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
-class HomeFragment : Fragment() {
-    private val viewModel: HomeViewModel by viewModels()
+@Composable
+fun HomeRoute(
+    snackbarHostState: SnackbarHostState,
+    onCoinClick: (CoinItem) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    val coins = remember { mutableStateListOf<CoinItem>() }
+    var isSearchVisible by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
+    var isContentVisible by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val someErrorMessage = stringResource(id = R.string.some_error)
 
-    private val coins = mutableStateListOf<CoinItem>()
-    private var isSearchVisible by mutableStateOf(false)
-    private var searchText by mutableStateOf("")
-    private var isContentVisible by mutableStateOf(false)
-    private var isLoading by mutableStateOf(false)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (isSearchVisible) {
-                    closeSearch()
-                } else {
-                    isEnabled = false
-                    activity?.onBackPressedDispatcher?.onBackPressed()
-                }
-            }
-        })
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                HomeScreen(
-                    coins = coins,
-                    isSearchVisible = isSearchVisible,
-                    searchText = searchText,
-                    isContentVisible = isContentVisible,
-                    onSearchClick = { isSearchVisible = true },
-                    onSearchChange = ::onSearchChanged,
-                    onCloseSearchClick = ::closeSearch,
-                    onCoinClick = { coinItem ->
-                        navigateToDetail(coinItem, this)
-                    }
-                )
-                LoadingDialog(isVisible = isLoading)
-            }
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        observeCoinsMarketsResource()
-        loadCoinsMarkets(1)
-    }
-
-    override fun onDestroyView() {
-        hideLoading()
-        super.onDestroyView()
-    }
-
-    private fun observeCoinsMarketsResource() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                launch {
-                    viewModel.coinState.collect { resource ->
-                        when (resource) {
-                            CoinResource.Loading -> {
-                                showLoading()
-                                isContentVisible = false
-                            }
-
-                            is CoinResource.Success -> {
-                                hideLoading()
-                                coins.replaceAll(resource.data.orEmpty())
-                                isContentVisible = true
-                            }
-
-                            is CoinResource.Error -> {
-                                hideLoading()
-                                showError(getString(R.string.some_error))
-                            }
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.searchCoinState.collect { result ->
-                        coins.replaceAll(result)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun onSearchChanged(value: String) {
+    fun onSearchChanged(value: String) {
         searchText = value.trim()
         viewModel.postSearchCoinsMarketsPage(searchText)
     }
 
-    private fun closeSearch() {
-        hideKeyboard()
+    fun closeSearch() {
+        keyboardController?.hide()
         searchText = ""
         isSearchVisible = false
         onSearchChanged("")
     }
 
-    private fun navigateToDetail(coinItem: CoinItem, view: View) {
-        val bundle = Bundle().apply {
-            putParcelable("coinItem", coinItem)
+    BackHandler(enabled = isSearchVisible) {
+        closeSearch()
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.postCoinsMarketsPage(1)
+
+        launch {
+            viewModel.coinState.collect { resource ->
+                when (resource) {
+                    CoinResource.Loading -> {
+                        isLoading = true
+                        isContentVisible = false
+                    }
+
+                    is CoinResource.Success -> {
+                        isLoading = false
+                        coins.replaceAll(resource.data.orEmpty())
+                        isContentVisible = true
+                    }
+
+                    is CoinResource.Error -> {
+                        isLoading = false
+                        snackbarHostState.showSnackbar(someErrorMessage)
+                    }
+                }
+            }
         }
-        view.findNavController().navigate(R.id.detail_fragment, bundle)
+
+        launch {
+            viewModel.searchCoinState.collect { result ->
+                coins.replaceAll(result)
+            }
+        }
     }
 
-    private fun loadCoinsMarkets(page: Int) = viewModel.postCoinsMarketsPage(page)
-
-    private fun showLoading() {
-        isLoading = true
-    }
-
-    private fun hideLoading() {
-        isLoading = false
-    }
+    HomeScreen(
+        coins = coins,
+        isSearchVisible = isSearchVisible,
+        searchText = searchText,
+        isContentVisible = isContentVisible,
+        onSearchClick = { isSearchVisible = true },
+        onSearchChange = ::onSearchChanged,
+        onCloseSearchClick = ::closeSearch,
+        onCoinClick = onCoinClick,
+        modifier = modifier
+    )
+    LoadingDialog(isVisible = isLoading)
 }
 
 private fun <T> MutableList<T>.replaceAll(items: List<T>) {

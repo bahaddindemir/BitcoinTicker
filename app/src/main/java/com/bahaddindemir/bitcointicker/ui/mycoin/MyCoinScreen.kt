@@ -1,9 +1,5 @@
 package com.bahaddindemir.bitcointicker.ui.mycoin
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +17,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -35,64 +31,35 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinImage
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import coil3.compose.AsyncImage
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
-@AndroidEntryPoint
-class MyCoinFragment : Fragment() {
-    private val viewModel: MyCoinViewModel by viewModels()
+@Composable
+fun MyCoinRoute(
+    onCoinClick: (CoinItem) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MyCoinViewModel = hiltViewModel()
+) {
+    val myCoins = remember { mutableStateListOf<CoinDetailItem>() }
 
-    private val myCoins = mutableStateListOf<CoinDetailItem>()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                MyCoinScreen(
-                    coins = myCoins,
-                    onCoinClick = { coinDetailItem ->
-                        navigateToDetail(coinDetailItem, this)
-                    }
-                )
-            }
+    LaunchedEffect(viewModel) {
+        viewModel.coinState.collect { resource ->
+            myCoins.clear()
+            myCoins.addAll(resource)
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.coinState.collect { resource ->
-                    myCoins.clear()
-                    myCoins.addAll(resource)
-                }
-            }
-        }
-    }
-
-    private fun navigateToDetail(coinDetailItem: CoinDetailItem, view: View) {
-        val coinItem = CoinItem(coinDetailItem.id)
-        val bundle = Bundle().apply {
-            putParcelable("coinItem", coinItem)
-        }
-
-        view.findNavController().navigate(R.id.detail_fragment, bundle)
-    }
+    MyCoinScreen(
+        coins = myCoins,
+        onCoinClick = { coinDetailItem ->
+            onCoinClick(CoinItem(id = coinDetailItem.id, name = coinDetailItem.name.orEmpty()))
+        },
+        modifier = modifier
+    )
 }
 
 @Composable

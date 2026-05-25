@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
+import com.bahaddindemir.bitcointicker.util.AppPreferences
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,8 +20,14 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class DetailViewModel @Inject constructor(private val coinRepository: CoinRepository) : ViewModel() {
+class DetailViewModel @Inject constructor(
+    private val coinRepository: CoinRepository,
+    private val appPreferences: AppPreferences
+) : ViewModel() {
     private val coinItem = MutableSharedFlow<String>(replay = 1)
+
+    val defaultCurrency: String
+        get() = appPreferences.defaultCurrency ?: "BTC"
 
     val coinDetailState: StateFlow<CoinResource<CoinDetailItem>> = coinItem
         .flatMapLatest { coinItemId -> coinRepository.loadCoinDetail(coinItemId) }

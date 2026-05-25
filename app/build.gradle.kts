@@ -4,7 +4,6 @@ plugins {
   alias(libs.plugins.kotlin.android)
   id("kotlin-parcelize")
   alias(libs.plugins.hilt)
-  alias(libs.plugins.navigation.safe.args)
   alias(libs.plugins.google.services)
   alias(libs.plugins.compose.compiler)
   id("bitcointicker.android.application")
@@ -16,7 +15,6 @@ dependencies {
   implementation(libs.material)
   implementation(libs.constraint.layout)
   implementation(libs.recyclerview)
-  implementation(libs.navigation.runtime)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.junit.ext)
@@ -49,9 +47,6 @@ dependencies {
   implementation(libs.chuck)
 
   // Navigation
-  implementation(libs.navigation.fragment)
-  implementation(libs.navigation.ui)
-  implementation(libs.navigation.dynamic)
   implementation(libs.navigation.compose)
   androidTestImplementation(libs.navigation.test)
 

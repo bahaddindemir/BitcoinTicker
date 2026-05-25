@@ -1,12 +1,5 @@
 package com.bahaddindemir.bitcointicker.ui.detail
 
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,12 +17,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,12 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinImage
@@ -60,194 +51,118 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinLocalization
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
-import com.bahaddindemir.bitcointicker.extension.parcelable
-import com.bahaddindemir.bitcointicker.extension.showError
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
 import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
-import com.bahaddindemir.bitcointicker.util.AppPreferences
 import coil3.compose.AsyncImage
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
-class DetailFragment : Fragment() {
-    private val viewModel: DetailViewModel by viewModels()
-    private val authViewModel: AuthViewModel by viewModels()
+@Composable
+fun DetailRoute(
+    coinId: String,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: DetailViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
+    var refreshIntervalTime by remember { mutableLongStateOf(2000L) }
+    var confirmIntervalTime by remember { mutableLongStateOf(0L) }
+    var coinDetailItem by remember { mutableStateOf<CoinDetailItem?>(null) }
+    var coinTitle by remember { mutableStateOf("") }
+    var intervalText by remember { mutableStateOf(refreshIntervalTime.toString()) }
+    var isFavoriteCoin by remember { mutableStateOf(false) }
+    var lastUpdatedDate by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    val someErrorMessage = stringResource(id = R.string.some_error)
 
-    private lateinit var coinItem: CoinItem
-    private var refreshIntervalTime: Long = 2000L
-    private var confirmIntervalTime: Long = 0L
-
-    private var coinDetailItem by mutableStateOf<CoinDetailItem?>(null)
-    private var coinTitle by mutableStateOf("")
-    private var intervalText by mutableStateOf(refreshIntervalTime.toString())
-    private var isFavoriteCoin by mutableStateOf(false)
-    private var lastUpdatedDate by mutableStateOf("")
-    private var isLoading by mutableStateOf(false)
-
-    @Inject
-    lateinit var appPreferences: AppPreferences
-
-    companion object {
-        private const val WHAT_MSG = 1
-    }
-
-    private val handler = object : Handler(Looper.getMainLooper()) {
-        override fun handleMessage(msg: Message) {
-            loadCoinDetail(coinItem)
+    LaunchedEffect(coinId, refreshIntervalTime) {
+        while (true) {
+            viewModel.setCoinDetailId(coinId)
+            delay(refreshIntervalTime)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                DetailScreen(
-                    title = coinTitle,
-                    coinDetailItem = coinDetailItem,
-                    defaultCurrency = appPreferences.defaultCurrency ?: "BTC",
-                    intervalText = intervalText,
-                    isFavorite = isFavoriteCoin,
-                    lastUpdatedDate = lastUpdatedDate,
-                    onIntervalChange = ::onIntervalChanged,
-                    onConfirmClick = {
-                        setIntervalTime(confirmIntervalTime.takeIf { it != 0L }
-                            ?: refreshIntervalTime)
-                    },
-                    onFavoriteClick = ::onFavoriteClick,
-                    onBackClick = {
-                        findNavController().popBackStack()
+    LaunchedEffect(viewModel) {
+        launch {
+            viewModel.coinDetailState.collect { resource ->
+                when (resource) {
+                    CoinResource.Loading -> {
+                        isLoading = true
                     }
-                )
-                LoadingDialog(isVisible = isLoading)
-            }
-        }
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        getFragmentArguments()
-        observeCoinDetailData()
-        observeFavoriteResponse()
-    }
-
-    private fun getFragmentArguments() {
-        arguments?.let {
-            coinItem = it.parcelable<CoinItem>("coinItem") ?: return
-            coinTitle = coinItem.name
-            loadCoinDetail(coinItem)
-        }
-    }
-
-    private fun observeCoinDetailData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.coinDetailState.collect { resource ->
-                    when (resource) {
-                        CoinResource.Loading -> showLoading()
-                        is CoinResource.Success -> {
-                            hideLoading()
-                            resource.data?.let {
-                                handleCoinDetailDataOnSuccess(it)
-                            }
-
-                            val msg = Message.obtain()
-                            msg.what = WHAT_MSG
-                            handler.sendMessageDelayed(msg, refreshIntervalTime)
+                    is CoinResource.Success -> {
+                        isLoading = false
+                        resource.data?.let { detail ->
+                            coinDetailItem = detail
+                            coinTitle = detail.name.orEmpty()
+                            lastUpdatedDate = getCurrentDate()
+                            detail.isFavorite?.let { isFavoriteCoin = it }
                         }
+                    }
 
-                        is CoinResource.Error -> {
-                            hideLoading()
-                            showError(getString(R.string.some_error))
-                        }
+                    is CoinResource.Error -> {
+                        isLoading = false
+                        snackbarHostState.showSnackbar(someErrorMessage)
                     }
                 }
             }
         }
-    }
 
-    private fun observeFavoriteResponse() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.successResponse.collect {
-                    if (it) handleFavoriteButton()
-                    else showError(getString(R.string.some_error))
-                }
-            }
-        }
-    }
-
-    private fun onIntervalChanged(value: String) {
-        intervalText = value
-        confirmIntervalTime = value.trim().toLongOrNull() ?: 0L
-    }
-
-    private fun onFavoriteClick() {
-        coinDetailItem?.run {
-            authViewModel.user?.let { fireBaseUser ->
-                if (!isFavoriteCoin) {
-                    viewModel.onAddFavoriteFireStore(fireBaseUser, this)
+        launch {
+            viewModel.successResponse.collect { isSuccess ->
+                if (isSuccess) {
+                    isFavoriteCoin = !isFavoriteCoin
+                    coinDetailItem?.let { detail ->
+                        detail.isFavorite = isFavoriteCoin
+                        viewModel.updateFavoriteCoinDetail(detail)
+                    }
                 } else {
-                    viewModel.onDeleteFavoriteFireStore(fireBaseUser, this)
+                    snackbarHostState.showSnackbar(someErrorMessage)
                 }
             }
         }
     }
 
-    private fun loadCoinDetail(coinItem: CoinItem?) {
-        coinItem?.let {
-            viewModel.setCoinDetailId(it.id)
-        }
-    }
+    DetailScreen(
+        title = coinTitle,
+        coinDetailItem = coinDetailItem,
+        defaultCurrency = viewModel.defaultCurrency,
+        intervalText = intervalText,
+        isFavorite = isFavoriteCoin,
+        lastUpdatedDate = lastUpdatedDate,
+        onIntervalChange = { value ->
+            intervalText = value
+            confirmIntervalTime = value.trim().toLongOrNull() ?: 0L
+        },
+        onConfirmClick = {
+            refreshIntervalTime = confirmIntervalTime.takeIf { it != 0L } ?: refreshIntervalTime
+        },
+        onFavoriteClick = {
+            coinDetailItem?.let { detail ->
+                authViewModel.user?.let { fireBaseUser ->
+                    if (!isFavoriteCoin) {
+                        viewModel.onAddFavoriteFireStore(fireBaseUser, detail)
+                    } else {
+                        viewModel.onDeleteFavoriteFireStore(fireBaseUser, detail)
+                    }
+                }
+            }
+        },
+        onBackClick = onBackClick,
+        modifier = modifier
+    )
+    LoadingDialog(isVisible = isLoading)
+}
 
-    private fun setIntervalTime(changedTime: Long) {
-        refreshIntervalTime = changedTime
-    }
-
-    override fun onDestroyView() {
-        handler.removeMessages(WHAT_MSG)
-        hideLoading()
-        super.onDestroyView()
-    }
-
-    private fun getCurrentDate(): String {
-        val currentTime = Calendar.getInstance().time
-        val dateFormat = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.getDefault())
-        return dateFormat.format(currentTime)
-    }
-
-    private fun handleCoinDetailDataOnSuccess(coinDetailItem: CoinDetailItem) {
-        this.coinDetailItem = coinDetailItem
-        lastUpdatedDate = getCurrentDate()
-        coinDetailItem.isFavorite?.let {
-            isFavoriteCoin = it
-        }
-    }
-
-    private fun handleFavoriteButton() {
-        isFavoriteCoin = !isFavoriteCoin
-
-        coinDetailItem?.run {
-            this.isFavorite = isFavoriteCoin
-            viewModel.updateFavoriteCoinDetail(this)
-        }
-    }
-
-    private fun showLoading() {
-        isLoading = true
-    }
-
-    private fun hideLoading() {
-        isLoading = false
-    }
+private fun getCurrentDate(): String {
+    val currentTime = Calendar.getInstance().time
+    val dateFormat = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.getDefault())
+    return dateFormat.format(currentTime)
 }
 
 @Composable

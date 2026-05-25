@@ -2,55 +2,52 @@ package com.bahaddindemir.bitcointicker.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.core.view.doOnAttach
-import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commitNow
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.onNavDestinationSelected
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.services.BackgroundRefreshService
-import com.bahaddindemir.bitcointicker.extension.navigateToBottomDestination
+import com.bahaddindemir.bitcointicker.ui.detail.DetailRoute
+import com.bahaddindemir.bitcointicker.ui.home.HomeRoute
+import com.bahaddindemir.bitcointicker.ui.mycoin.MyCoinRoute
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private var navController: NavController? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainActivityScreen(supportFragmentManager) {
-                navController = it
-            }
+            MainActivityScreen()
         }
 
         startBackgroundService()
@@ -59,15 +56,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopService()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return navController?.let { item.onNavDestinationSelected(it) } == true ||
-                super.onOptionsItemSelected(item)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController?.navigateUp() == true || super.onSupportNavigateUp()
     }
 
     private fun startBackgroundService() {
@@ -85,74 +73,119 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun MainActivityScreen(
-    fragmentManager: FragmentManager,
-    modifier: Modifier = Modifier,
-    onNavControllerReady: (NavController) -> Unit
+    modifier: Modifier = Modifier
 ) {
-    var navController by remember { mutableStateOf<NavController?>(null) }
-    var isBottomNavigationVisible by remember { mutableStateOf(true) }
-    var selectedDestinationId by remember { mutableIntStateOf(R.id.home_fragment) }
+    val navController = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val isBottomNavigationVisible = currentRoute != MainRoute.Detail.route
 
-    Column(modifier = modifier.fillMaxSize()) {
-        MainNavHostFragment(
-            fragmentManager = fragmentManager,
-            modifier = Modifier.weight(1f),
-            onNavControllerReady = { controller ->
-                navController = controller
-                onNavControllerReady(controller)
-                controller.addOnDestinationChangedListener { _, destination, _ ->
-                    isBottomNavigationVisible = destination.id != R.id.detail_fragment
-                    selectedDestinationId = destination.id
-                }
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        snackbarHost = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 24.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                SnackbarHost(hostState = snackbarHostState)
             }
+        },
+        bottomBar = {
+            if (isBottomNavigationVisible) {
+                MainBottomNavigation(
+                    navController = navController,
+                    currentRoute = currentRoute,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    ) { paddingValues ->
+        MainNavHost(
+            navController = navController,
+            snackbarHostState = snackbarHostState,
+            modifier = Modifier.padding(paddingValues)
         )
+    }
+}
 
-        val controller = navController
-        if (controller != null && isBottomNavigationVisible) {
-            MainBottomNavigation(
-                navController = controller,
-                selectedDestinationId = selectedDestinationId,
-                modifier = Modifier.fillMaxWidth()
+@Composable
+private fun MainNavHost(
+    navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController = navController,
+        startDestination = MainRoute.Home.route,
+        modifier = modifier.fillMaxSize()
+    ) {
+        composable(MainRoute.Home.route) {
+            HomeRoute(
+                snackbarHostState = snackbarHostState,
+                onCoinClick = { coin ->
+                    navController.navigate(MainRoute.Detail.createRoute(coin.id))
+                }
+            )
+        }
+        composable(MainRoute.MyCoins.route) {
+            MyCoinRoute(
+                onCoinClick = { coin ->
+                    navController.navigate(MainRoute.Detail.createRoute(coin.id))
+                }
+            )
+        }
+        composable(
+            route = MainRoute.Detail.route,
+            arguments = listOf(navArgument(DETAIL_COIN_ID_ARG) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val coinId = backStackEntry.arguments?.getString(DETAIL_COIN_ID_ARG).orEmpty()
+            DetailRoute(
+                coinId = coinId,
+                snackbarHostState = snackbarHostState,
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
 }
 
-@Composable
-private fun MainNavHostFragment(
-    fragmentManager: FragmentManager,
-    modifier: Modifier = Modifier,
-    onNavControllerReady: (NavController) -> Unit
-) {
-    AndroidView(
-        modifier = modifier.fillMaxSize(),
-        factory = { context ->
-            FragmentContainerView(context).apply {
-                id = R.id.fragmentContainerView
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                doOnAttach {
-                    val navHostFragment = fragmentManager.findFragmentById(id) as? NavHostFragment
-                        ?: NavHostFragment.create(R.navigation.nav_home).also { navHost ->
-                            fragmentManager.commitNow {
-                                setReorderingAllowed(true)
-                                replace(id, navHost)
-                                setPrimaryNavigationFragment(navHost)
-                            }
-                        }
-                    onNavControllerReady(navHostFragment.navController)
-                }
+private fun NavHostController.navigateToBottomDestination(route: MainRoute) {
+    navigate(route.route) {
+        popUpTo(graph.startDestinationId) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
+private enum class MainRoute(val route: String) {
+    Home("home"),
+    MyCoins("my_coins"),
+    Detail("detail/{$DETAIL_COIN_ID_ARG}");
+
+    fun createRoute(coinId: String): String {
+        return when (this) {
+            Detail -> "detail/$coinId"
+            else -> route
+        }
+    }
+
+    companion object {
+        fun fromRoute(route: String?): MainRoute? {
+            return entries.firstOrNull { item ->
+                route == item.route
             }
         }
-    )
+    }
 }
 
 @Composable
 private fun MainBottomNavigation(
-    navController: NavController,
-    selectedDestinationId: Int,
+    navController: NavHostController,
+    currentRoute: String?,
     modifier: Modifier = Modifier
 ) {
     NavigationBar(
@@ -161,10 +194,10 @@ private fun MainBottomNavigation(
     ) {
         MainBottomNavigationItem.entries.forEach { item ->
             NavigationBarItem(
-                selected = selectedDestinationId == item.destinationId,
+                selected = MainRoute.fromRoute(currentRoute) == item.route,
                 onClick = {
-                    if (selectedDestinationId != item.destinationId) {
-                        navController.navigateToBottomDestination(item.destinationId)
+                    if (MainRoute.fromRoute(currentRoute) != item.route) {
+                        navController.navigateToBottomDestination(item.route)
                     }
                 },
                 icon = {
@@ -190,17 +223,17 @@ private fun MainBottomNavigation(
 }
 
 private enum class MainBottomNavigationItem(
-    val destinationId: Int,
+    val route: MainRoute,
     val iconResId: Int,
     val labelResId: Int,
 ) {
     Home(
-        destinationId = R.id.home_fragment,
+        route = MainRoute.Home,
         iconResId = R.drawable.ic_main,
         labelResId = R.string.home
     ),
     MyCoins(
-        destinationId = R.id.my_coin_fragment,
+        route = MainRoute.MyCoins,
         iconResId = R.drawable.ic_my_coins,
         labelResId = R.string.my_coins_fragment
     )
@@ -209,5 +242,7 @@ private enum class MainBottomNavigationItem(
 @Preview(showBackground = true)
 @Composable
 private fun MainActivityScreenPreview() {
-    Column(modifier = Modifier.fillMaxSize()) {}
+    Box(modifier = Modifier.fillMaxSize())
 }
+
+private const val DETAIL_COIN_ID_ARG = "coinId"

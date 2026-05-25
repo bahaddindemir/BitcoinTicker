@@ -4,6 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -83,6 +89,7 @@ fun MainActivityScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = colorResource(id = R.color.splash_accent),
         snackbarHost = {
             Box(
                 modifier = Modifier
@@ -94,7 +101,17 @@ fun MainActivityScreen(
             }
         },
         bottomBar = {
-            if (isBottomNavigationVisible) {
+            AnimatedVisibility(
+                visible = isBottomNavigationVisible,
+                enter = slideInVertically(
+                    animationSpec = tween(MAIN_BOTTOM_BAR_ANIMATION_DURATION_MS),
+                    initialOffsetY = { height -> height }
+                ),
+                exit = slideOutVertically(
+                    animationSpec = tween(MAIN_BOTTOM_BAR_ANIMATION_DURATION_MS),
+                    targetOffsetY = { height -> height }
+                )
+            ) {
                 MainBottomNavigation(
                     navController = navController,
                     currentRoute = currentRoute,
@@ -120,7 +137,11 @@ private fun MainNavHost(
     NavHost(
         navController = navController,
         startDestination = MainRoute.Home.route,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
         composable(MainRoute.Home.route) {
             HomeRoute(
@@ -246,3 +267,4 @@ private fun MainActivityScreenPreview() {
 }
 
 private const val DETAIL_COIN_ID_ARG = "coinId"
+private const val MAIN_BOTTOM_BAR_ANIMATION_DURATION_MS = 180

@@ -22,10 +22,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +33,7 @@ import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinImage
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
 import coil3.compose.AsyncImage
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
@@ -68,10 +67,12 @@ fun MyCoinScreen(
     onCoinClick: (CoinDetailItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.splash_accent))
+            .background(colors.background)
     ) {
         MyCoinToolbar()
         LazyVerticalGrid(
@@ -96,6 +97,8 @@ fun MyCoinScreen(
 
 @Composable
 private fun MyCoinToolbar(modifier: Modifier = Modifier) {
+    val colors = BitcoinTickerColors.current
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -105,7 +108,7 @@ private fun MyCoinToolbar(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = stringResource(id = R.string.my_coins_fragment),
-            color = Color.White,
+            color = colors.onDark,
             fontSize = 20.sp,
             textAlign = TextAlign.Center
         )
@@ -118,12 +121,14 @@ private fun MyCoinCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Card(
         onClick = onClick,
         modifier = modifier.padding(horizontal = 4.dp),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.splash_accent)
+            containerColor = colors.background
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -140,7 +145,7 @@ private fun MyCoinCard(
             Text(
                 text = coin.name.orEmpty(),
                 modifier = Modifier.fillMaxWidth(),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center
             )

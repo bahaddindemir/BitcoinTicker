@@ -25,11 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -41,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bahaddindemir.bitcointicker.R
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
 
 enum class LoginFocusTarget {
     Email,
@@ -67,8 +66,7 @@ fun LoginScreen(
     val emailFocusRequester = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val splashColor = colorResource(id = R.color.splash)
-    val splashAccentColor = colorResource(id = R.color.splash_accent)
+    val colors = BitcoinTickerColors.current
 
     LaunchedEffect(focusTarget) {
         when (focusTarget) {
@@ -85,7 +83,7 @@ fun LoginScreen(
             .fillMaxSize()
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(splashColor, splashAccentColor)
+                    colors = listOf(colors.brand, colors.background)
                 )
             ),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -93,7 +91,7 @@ fun LoginScreen(
         Text(
             modifier = Modifier.padding(top = 50.dp),
             text = stringResource(id = R.string.welcome).uppercase(),
-            color = Color.White,
+            color = colors.onDark,
             fontSize = 24.sp,
             textAlign = TextAlign.Center
         )
@@ -167,7 +165,7 @@ fun LoginScreen(
         ) {
             Text(
                 text = stringResource(id = R.string.log_in_to_sign_up).uppercase(),
-                color = colorResource(id = R.color.gray),
+                color = colors.mutedText,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
@@ -180,10 +178,12 @@ private fun LoginFieldLabel(
     text: String,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Text(
         modifier = modifier,
         text = text,
-        color = colorResource(id = R.color.gray),
+        color = colors.mutedText,
         fontSize = 12.sp
     )
 }
@@ -200,20 +200,20 @@ private fun LoginTextField(
     onNext: () -> Unit = {},
     onDone: () -> Unit = {}
 ) {
-    val gray = colorResource(id = R.color.gray)
+    val colors = BitcoinTickerColors.current
 
     BasicTextField(
         modifier = modifier
             .height(40.dp)
-            .background(colorResource(id = R.color.input)),
+            .background(colors.inputBackground),
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
         textStyle = TextStyle(
-            color = gray,
+            color = colors.mutedText,
             fontSize = 14.sp
         ),
-        cursorBrush = SolidColor(gray),
+        cursorBrush = SolidColor(colors.mutedText),
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
@@ -233,7 +233,7 @@ private fun LoginTextField(
                 if (value.isEmpty()) {
                     Text(
                         text = hint,
-                        color = gray,
+                        color = colors.mutedText,
                         fontSize = 14.sp
                     )
                 }
@@ -249,11 +249,13 @@ private fun LoginActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Box(
         modifier = modifier
             .height(40.dp)
             .background(
-                color = colorResource(id = R.color.button_background),
+                color = colors.action,
                 shape = RoundedCornerShape(50.dp)
             )
             .clickable(onClick = onClick),
@@ -261,7 +263,7 @@ private fun LoginActionButton(
     ) {
         Text(
             text = text,
-            color = colorResource(id = R.color.splash),
+            color = colors.brand,
             fontSize = 16.sp,
             textAlign = TextAlign.Center
         )

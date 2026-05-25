@@ -10,25 +10,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bahaddindemir.bitcointicker.R
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
 
 @Composable
 fun SplashScreen(modifier: Modifier = Modifier) {
-    val splashColor = colorResource(id = R.color.splash)
-    val splashAccentColor = colorResource(id = R.color.splash_accent)
+    val colors = BitcoinTickerColors.current
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(splashColor, splashAccentColor)
+                    colors = listOf(colors.brand, colors.background)
                 )
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -37,7 +35,7 @@ fun SplashScreen(modifier: Modifier = Modifier) {
         Text(
             modifier = Modifier.padding(bottom = 50.dp),
             text = stringResource(id = R.string.splash_text),
-            color = Color.White,
+            color = colors.onDark,
             fontSize = 100.sp
         )
         Text(

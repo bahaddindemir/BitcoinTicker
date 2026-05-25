@@ -9,13 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.bahaddindemir.bitcointicker.R
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
 
 @Composable
 fun LoadingDialog(
@@ -24,6 +23,7 @@ fun LoadingDialog(
     hint: String? = null
 ) {
     if (!isVisible) return
+    val colors = BitcoinTickerColors.current
 
     Dialog(
         onDismissRequest = {},
@@ -38,7 +38,7 @@ fun LoadingDialog(
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(60.dp),
-                color = colorResource(id = R.color.splash_accent)
+                color = colors.background
             )
             if (!hint.isNullOrEmpty()) {
                 Text(

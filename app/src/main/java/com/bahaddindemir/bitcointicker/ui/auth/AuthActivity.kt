@@ -32,6 +32,8 @@ import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import com.bahaddindemir.bitcointicker.ui.main.MainActivity
 import com.bahaddindemir.bitcointicker.ui.splash.SplashScreen
 import com.bahaddindemir.bitcointicker.ui.splash.SplashViewModel
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerTheme
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -42,9 +44,11 @@ class AuthActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AuthActivityScreen(
-                openHome = { openActivityAndClearStack(MainActivity::class.java) }
-            )
+            BitcoinTickerTheme {
+                AuthActivityScreen(
+                    openHome = { openActivityAndClearStack(MainActivity::class.java) }
+                )
+            }
         }
     }
 }
@@ -56,9 +60,11 @@ fun AuthActivityScreen(
 ) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val colors = BitcoinTickerColors.current
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = colors.background,
         snackbarHost = {
             Box(
                 modifier = Modifier

@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,6 +50,7 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
 import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
 import coil3.compose.AsyncImage
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import java.text.SimpleDateFormat
@@ -177,10 +177,12 @@ fun DetailScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.splash_accent))
+            .background(colors.background)
     ) {
         DetailToolbar(
             title = title,
@@ -212,6 +214,8 @@ private fun DetailToolbar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -242,7 +246,7 @@ private fun DetailToolbar(
             Text(
                 text = title,
                 modifier = Modifier.padding(start = 8.dp),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
@@ -286,6 +290,8 @@ private fun RefreshIntervalContent(
     onConfirmClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -293,7 +299,7 @@ private fun RefreshIntervalContent(
     ) {
         Text(
             text = stringResource(id = R.string.refresh_interval),
-            color = Color.White,
+            color = colors.onDark,
             fontSize = 20.sp
         )
         TextField(
@@ -303,20 +309,20 @@ private fun RefreshIntervalContent(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = colors.onDark,
+                unfocusedTextColor = colors.onDark,
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.White,
-                unfocusedIndicatorColor = Color.White,
-                cursorColor = Color.White
+                focusedIndicatorColor = colors.onDark,
+                unfocusedIndicatorColor = colors.onDark,
+                cursorColor = colors.onDark
             )
         )
         Button(
             onClick = onConfirmClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.button_background),
-                contentColor = Color.White
+                containerColor = colors.action,
+                contentColor = colors.onDark
             )
         ) {
             Text(text = stringResource(id = R.string.confirm_btn))
@@ -331,6 +337,7 @@ private fun DetailContent(
     lastUpdatedDate: String,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
     val hashAlgorithm = coinDetailItem?.hashingAlgorithm.orEmpty()
     val description = coinDetailItem?.description?.tr.orEmpty()
     val currentPrice = coinDetailItem?.marketData?.currentPrice?.format(defaultCurrency).orEmpty()
@@ -348,13 +355,13 @@ private fun DetailContent(
             Text(
                 text = stringResource(id = R.string.hash_algorithm),
                 modifier = Modifier.padding(top = 36.dp),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 18.sp
             )
             Text(
                 text = hashAlgorithm,
                 modifier = Modifier.padding(top = 4.dp),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 20.sp
             )
         }
@@ -364,7 +371,7 @@ private fun DetailContent(
             Text(
                 text = stringResource(id = R.string.description),
                 modifier = Modifier.padding(top = 16.dp),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 18.sp
             )
             HtmlText(
@@ -404,13 +411,15 @@ private fun DetailSectionDivider(
     visible: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     if (visible) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
                 .height(1.dp)
-                .background(colorResource(id = R.color.splash_accent))
+                .background(colors.background)
         )
     }
 }
@@ -424,18 +433,20 @@ private fun DetailTextSection(
     valueTopPadding: androidx.compose.ui.unit.Dp = 4.dp,
     valueFontSize: androidx.compose.ui.unit.TextUnit = 14.sp
 ) {
+    val colors = BitcoinTickerColors.current
+
     if (visible) {
         Column(modifier = modifier) {
             Text(
                 text = title,
                 modifier = Modifier.padding(top = 16.dp),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 18.sp
             )
             Text(
                 text = value,
                 modifier = Modifier.padding(top = valueTopPadding),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = valueFontSize
             )
         }
@@ -447,10 +458,12 @@ private fun HtmlText(
     html: String,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Text(
         text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT).toString(),
         modifier = modifier.fillMaxWidth(),
-        color = Color.White
+        color = colors.onDark
     )
 }
 

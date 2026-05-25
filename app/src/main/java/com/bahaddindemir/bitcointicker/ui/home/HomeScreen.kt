@@ -34,7 +34,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -52,6 +51,7 @@ import com.bahaddindemir.bitcointicker.extension.isNegative
 import com.bahaddindemir.bitcointicker.extension.marketCapToText
 import com.bahaddindemir.bitcointicker.extension.priceChangeToText
 import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
 import coil3.compose.AsyncImage
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
@@ -150,10 +150,12 @@ fun HomeScreen(
     onCoinClick: (CoinItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.splash_accent))
+            .background(colors.background)
     ) {
         HomeToolbar(
             isSearchVisible = isSearchVisible,
@@ -213,6 +215,7 @@ private fun SearchToolbar(
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val colors = BitcoinTickerColors.current
 
     Row(
         modifier = modifier
@@ -235,17 +238,17 @@ private fun SearchToolbar(
                 .weight(1f)
                 .height(36.dp)
                 .background(
-                    color = colorResource(id = R.color.splash),
+                    color = colors.brand,
                     shape = RoundedCornerShape(50.dp)
                 )
                 .padding(horizontal = 8.dp),
             singleLine = true,
             textStyle = androidx.compose.ui.text.TextStyle(
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center
             ),
-            cursorBrush = SolidColor(Color.White),
+            cursorBrush = SolidColor(colors.onDark),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
                 keyboardType = KeyboardType.Text
@@ -258,7 +261,7 @@ private fun SearchToolbar(
                     if (searchText.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.search),
-                            color = Color.White.copy(alpha = 0.65f),
+                            color = colors.onDark.copy(alpha = 0.65f),
                             fontSize = 13.sp,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -290,6 +293,8 @@ private fun DefaultHomeToolbar(
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -309,7 +314,7 @@ private fun DefaultHomeToolbar(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(id = R.string.app_name),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
@@ -332,6 +337,8 @@ private fun DefaultHomeToolbar(
 
 @Composable
 private fun CoinsHeader(modifier: Modifier = Modifier) {
+    val colors = BitcoinTickerColors.current
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -344,13 +351,13 @@ private fun CoinsHeader(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 24.dp),
-            color = colorResource(id = R.color.gray),
+            color = colors.mutedText,
             fontSize = 14.sp
         )
         Text(
             text = stringResource(id = R.string.price),
             modifier = Modifier.padding(end = 32.dp),
-            color = colorResource(id = R.color.gray),
+            color = colors.mutedText,
             fontSize = 14.sp,
             textAlign = TextAlign.Center
         )
@@ -363,6 +370,8 @@ private fun CoinRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -386,7 +395,7 @@ private fun CoinRow(
         ) {
             Text(
                 text = coin.name,
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
@@ -395,7 +404,7 @@ private fun CoinRow(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = coin.symbol.uppercase(),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
@@ -412,7 +421,7 @@ private fun CoinRow(
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = coin.currentPrice.marketCapToText(),
-                color = Color.White,
+                color = colors.onDark,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
             )

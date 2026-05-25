@@ -28,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +45,8 @@ import com.bahaddindemir.bitcointicker.data.services.BackgroundRefreshService
 import com.bahaddindemir.bitcointicker.ui.detail.DetailRoute
 import com.bahaddindemir.bitcointicker.ui.home.HomeRoute
 import com.bahaddindemir.bitcointicker.ui.mycoin.MyCoinRoute
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
+import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,7 +54,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainActivityScreen()
+            BitcoinTickerTheme {
+                MainActivityScreen()
+            }
         }
 
         startBackgroundService()
@@ -86,10 +89,11 @@ fun MainActivityScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val isBottomNavigationVisible = currentRoute != MainRoute.Detail.route
+    val colors = BitcoinTickerColors.current
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = colorResource(id = R.color.splash_accent),
+        containerColor = colors.background,
         snackbarHost = {
             Box(
                 modifier = Modifier
@@ -209,9 +213,11 @@ private fun MainBottomNavigation(
     currentRoute: String?,
     modifier: Modifier = Modifier
 ) {
+    val colors = BitcoinTickerColors.current
+
     NavigationBar(
         modifier = modifier,
-        containerColor = colorResource(id = R.color.splash)
+        containerColor = colors.brand
     ) {
         MainBottomNavigationItem.entries.forEach { item ->
             NavigationBarItem(
@@ -232,11 +238,11 @@ private fun MainBottomNavigation(
                     Text(text = stringResource(id = item.labelResId))
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = colorResource(id = R.color.button_background),
-                    unselectedIconColor = colorResource(id = R.color.button_background),
-                    selectedTextColor = colorResource(id = R.color.white),
-                    unselectedTextColor = colorResource(id = R.color.white),
-                    indicatorColor = colorResource(id = R.color.splash)
+                    selectedIconColor = colors.action,
+                    unselectedIconColor = colors.action,
+                    selectedTextColor = colors.onDark,
+                    unselectedTextColor = colors.onDark,
+                    indicatorColor = colors.brand
                 )
             )
         }

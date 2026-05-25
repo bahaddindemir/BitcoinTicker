@@ -1,9 +1,12 @@
 package com.bahaddindemir.bitcointicker.di
 
+import android.content.Context
 import com.bahaddindemir.bitcointicker.data.services.ApiService
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -18,9 +21,10 @@ object NetworkServicesModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
         return OkHttpClient.Builder()
                            .addInterceptor(RequestInterceptor())
+                           .addInterceptor(ChuckerInterceptor(context))
                            .readTimeout(30, TimeUnit.SECONDS)
                            .writeTimeout(30, TimeUnit.SECONDS)
                            .connectTimeout(30, TimeUnit.SECONDS)

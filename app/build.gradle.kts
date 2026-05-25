@@ -1,7 +1,6 @@
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.ksp)
-  alias(libs.plugins.kotlin.android)
   id("kotlin-parcelize")
   alias(libs.plugins.hilt)
   alias(libs.plugins.google.services)
@@ -40,7 +39,8 @@ dependencies {
   implementation(libs.retrofit)
   implementation(libs.retrofit.converter)
   implementation(libs.okhttp.logging)
-  implementation(libs.chuck)
+  debugImplementation(libs.chucker)
+  releaseImplementation(libs.chucker.no.op)
 
   // Navigation
   implementation(libs.navigation.compose)

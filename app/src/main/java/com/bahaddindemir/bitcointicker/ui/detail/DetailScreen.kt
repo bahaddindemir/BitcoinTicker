@@ -24,10 +24,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,24 +36,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinImage
-import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinLocalization
-import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.model.coin.CurrentPrice
 import com.bahaddindemir.bitcointicker.data.model.coin.PriceChange24hInCurrency
 import com.bahaddindemir.bitcointicker.ui.auth.AuthViewModel
 import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
-import coil3.compose.AsyncImage
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun DetailRoute(
@@ -68,99 +58,36 @@ fun DetailRoute(
     viewModel: DetailViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    var refreshIntervalTime by remember { mutableLongStateOf(2000L) }
-    var confirmIntervalTime by remember { mutableLongStateOf(0L) }
-    var coinDetailItem by remember { mutableStateOf<CoinDetailItem?>(null) }
-    var coinTitle by remember { mutableStateOf("") }
-    var intervalText by remember { mutableStateOf(refreshIntervalTime.toString()) }
-    var isFavoriteCoin by remember { mutableStateOf(false) }
-    var lastUpdatedDate by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val someErrorMessage = stringResource(id = R.string.some_error)
 
-    LaunchedEffect(coinId, refreshIntervalTime) {
-        while (true) {
-            viewModel.setCoinDetailId(coinId)
-            delay(refreshIntervalTime)
-        }
+    LaunchedEffect(coinId) {
+        viewModel.startRefreshing(coinId)
     }
 
     LaunchedEffect(viewModel) {
-        launch {
-            viewModel.coinDetailState.collect { resource ->
-                when (resource) {
-                    CoinResource.Loading -> {
-                        isLoading = true
-                    }
-
-                    is CoinResource.Success -> {
-                        isLoading = false
-                        resource.data?.let { detail ->
-                            coinDetailItem = detail
-                            coinTitle = detail.name.orEmpty()
-                            lastUpdatedDate = getCurrentDate()
-                            detail.isFavorite?.let { isFavoriteCoin = it }
-                        }
-                    }
-
-                    is CoinResource.Error -> {
-                        isLoading = false
-                        snackbarHostState.showSnackbar(someErrorMessage)
-                    }
-                }
-            }
-        }
-
-        launch {
-            viewModel.successResponse.collect { isSuccess ->
-                if (isSuccess) {
-                    isFavoriteCoin = !isFavoriteCoin
-                    coinDetailItem?.let { detail ->
-                        detail.isFavorite = isFavoriteCoin
-                        viewModel.updateFavoriteCoinDetail(detail)
-                    }
-                } else {
-                    snackbarHostState.showSnackbar(someErrorMessage)
-                }
+        viewModel.events.collect { event ->
+            when (event) {
+                DetailUiEvent.DetailLoadFailed,
+                DetailUiEvent.FavoriteChangeFailed -> snackbarHostState.showSnackbar(someErrorMessage)
             }
         }
     }
 
     DetailScreen(
-        title = coinTitle,
-        coinDetailItem = coinDetailItem,
-        defaultCurrency = viewModel.defaultCurrency,
-        intervalText = intervalText,
-        isFavorite = isFavoriteCoin,
-        lastUpdatedDate = lastUpdatedDate,
-        onIntervalChange = { value ->
-            intervalText = value
-            confirmIntervalTime = value.trim().toLongOrNull() ?: 0L
-        },
-        onConfirmClick = {
-            refreshIntervalTime = confirmIntervalTime.takeIf { it != 0L } ?: refreshIntervalTime
-        },
-        onFavoriteClick = {
-            coinDetailItem?.let { detail ->
-                authViewModel.user?.let { fireBaseUser ->
-                    if (!isFavoriteCoin) {
-                        viewModel.onAddFavoriteFireStore(fireBaseUser, detail)
-                    } else {
-                        viewModel.onDeleteFavoriteFireStore(fireBaseUser, detail)
-                    }
-                }
-            }
-        },
+        title = uiState.title,
+        coinDetailItem = uiState.coinDetailItem,
+        defaultCurrency = uiState.defaultCurrency,
+        intervalText = uiState.intervalText,
+        isFavorite = uiState.isFavorite,
+        lastUpdatedDate = uiState.lastUpdatedDate,
+        onIntervalChange = viewModel::onIntervalChange,
+        onConfirmClick = viewModel::onConfirmIntervalClick,
+        onFavoriteClick = { viewModel.onFavoriteClick(authViewModel.user) },
         onBackClick = onBackClick,
         modifier = modifier
     )
-    LoadingDialog(isVisible = isLoading)
-}
-
-private fun getCurrentDate(): String {
-    val currentTime = Calendar.getInstance().time
-    val dateFormat = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.getDefault())
-    return dateFormat.format(currentTime)
+    LoadingDialog(isVisible = uiState.isLoading)
 }
 
 @Composable

@@ -59,6 +59,7 @@ dependencies {
 
   // ViewModel
   implementation(libs.lifecycle.viewmodel)
+  implementation(libs.lifecycle.runtime.compose)
 
   // FireStore
   implementation(libs.firebase.firestore)

@@ -9,13 +9,21 @@ import com.bahaddindemir.bitcointicker.util.AppPreferences
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -25,11 +33,17 @@ class DetailViewModel @Inject constructor(
     private val appPreferences: AppPreferences
 ) : ViewModel() {
     private val coinItem = MutableSharedFlow<String>(replay = 1)
+    private var refreshJob: Job? = null
 
-    val defaultCurrency: String
-        get() = appPreferences.defaultCurrency ?: "BTC"
+    private val _events = MutableSharedFlow<DetailUiEvent>(extraBufferCapacity = 1)
+    val events = _events.asSharedFlow()
 
-    val coinDetailState: StateFlow<CoinResource<CoinDetailItem>> = coinItem
+    private val _uiState = MutableStateFlow(
+        DetailUiState(defaultCurrency = defaultCurrency)
+    )
+    val uiState = _uiState.asStateFlow()
+
+    private val coinDetailState: StateFlow<CoinResource<CoinDetailItem>> = coinItem
         .flatMapLatest { coinItemId -> coinRepository.loadCoinDetail(coinItemId) }
         .stateIn(
             scope = viewModelScope,
@@ -37,35 +51,127 @@ class DetailViewModel @Inject constructor(
             initialValue = CoinResource.Loading
         )
 
-    private val _successResponse = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
-    val successResponse = _successResponse.asSharedFlow()
+    val defaultCurrency: String
+        get() = appPreferences.defaultCurrency ?: "BTC"
 
-    fun onAddFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
+    init {
+        observeCoinDetail()
+    }
+
+    fun startRefreshing(coinItemId: String) {
+        if (_uiState.value.coinId == coinItemId && refreshJob?.isActive == true) return
+
+        refreshJob?.cancel()
+        _uiState.update { state ->
+            state.copy(
+                coinId = coinItemId,
+                defaultCurrency = defaultCurrency
+            )
+        }
+        refreshJob = viewModelScope.launch {
+            while (true) {
+                coinItem.emit(coinItemId)
+                delay(_uiState.value.refreshIntervalMillis)
+            }
+        }
+    }
+
+    fun onIntervalChange(value: String) {
+        _uiState.update { state -> state.copy(intervalText = value) }
+    }
+
+    fun onConfirmIntervalClick() {
+        val refreshInterval = _uiState.value.intervalText.trim().toLongOrNull()
+            ?.takeIf { interval -> interval > 0 }
+            ?: return
+
+        _uiState.update { state ->
+            state.copy(refreshIntervalMillis = refreshInterval)
+        }
+        _uiState.value.coinId?.let { coinId -> startRefreshing(coinId) }
+    }
+
+    fun onFavoriteClick(firebaseUser: FirebaseUser?) {
+        val coinDetailItem = _uiState.value.coinDetailItem ?: return
+        val user = firebaseUser ?: return
+
+        if (_uiState.value.isFavorite) {
+            deleteFavorite(user, coinDetailItem)
+        } else {
+            addFavorite(user, coinDetailItem)
+        }
+    }
+
+    private fun observeCoinDetail() {
+        viewModelScope.launch {
+            coinDetailState.collect { resource ->
+                when (resource) {
+                    CoinResource.Loading -> {
+                        _uiState.update { state -> state.copy(isLoading = true) }
+                    }
+
+                    is CoinResource.Success -> {
+                        _uiState.update { state ->
+                            val detail = resource.data
+                            state.copy(
+                                title = detail?.name.orEmpty(),
+                                coinDetailItem = detail,
+                                isFavorite = detail?.isFavorite ?: state.isFavorite,
+                                lastUpdatedDate = if (detail != null) getCurrentDate() else state.lastUpdatedDate,
+                                isLoading = false
+                            )
+                        }
+                    }
+
+                    is CoinResource.Error -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                isLoading = false
+                            )
+                        }
+                        _events.emit(DetailUiEvent.DetailLoadFailed)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addFavorite(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
         viewModelScope.launch {
             try {
                 coinRepository.addFavoriteCoin(firebaseUser, coinDetailItem)
-                _successResponse.emit(true)
+                updateFavoriteStateAfterSuccess()
             } catch (_: Exception) {
-                _successResponse.emit(false)
+                _events.emit(DetailUiEvent.FavoriteChangeFailed)
             }
         }
     }
 
-    fun onDeleteFavoriteFireStore(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
+    private fun deleteFavorite(firebaseUser: FirebaseUser, coinDetailItem: CoinDetailItem) {
         viewModelScope.launch {
             try {
                 coinRepository.deleteFavoriteCoin(firebaseUser, coinDetailItem)
-                _successResponse.emit(true)
+                updateFavoriteStateAfterSuccess()
             } catch (_: Exception) {
-                _successResponse.emit(false)
+                _events.emit(DetailUiEvent.FavoriteChangeFailed)
             }
         }
     }
 
-    fun updateFavoriteCoinDetail(coinDetailItem: CoinDetailItem) =
-        coinRepository.updateFavoriteCoin(coinDetailItem)
+    private fun updateFavoriteStateAfterSuccess() {
+        _uiState.update { state ->
+            val isFavorite = !state.isFavorite
+            state.coinDetailItem?.let { coinDetailItem ->
+                coinDetailItem.isFavorite = isFavorite
+                coinRepository.updateFavoriteCoin(coinDetailItem)
+            }
+            state.copy(isFavorite = isFavorite)
+        }
+    }
 
-    fun setCoinDetailId(coinItemId: String) {
-        coinItem.tryEmit(coinItemId)
+    private fun getCurrentDate(): String {
+        val currentTime = Calendar.getInstance().time
+        val dateFormat = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.getDefault())
+        return dateFormat.format(currentTime)
     }
 }

@@ -20,14 +20,11 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -43,18 +40,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.SnackbarHostState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
-import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.extension.isNegative
 import com.bahaddindemir.bitcointicker.extension.marketCapToText
 import com.bahaddindemir.bitcointicker.extension.priceChangeToText
 import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
-import coil3.compose.AsyncImage
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeRoute(
@@ -63,79 +58,39 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val coins = remember { mutableStateListOf<CoinItem>() }
-    var isSearchVisible by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
-    var isContentVisible by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val someErrorMessage = stringResource(id = R.string.some_error)
 
-    fun onSearchChanged(value: String) {
-        searchText = value.trim()
-        viewModel.postSearchCoinsMarketsPage(searchText)
-    }
-
     fun closeSearch() {
         keyboardController?.hide()
-        searchText = ""
-        isSearchVisible = false
-        onSearchChanged("")
+        viewModel.onCloseSearchClick()
     }
 
-    BackHandler(enabled = isSearchVisible) {
+    BackHandler(enabled = uiState.isSearchVisible) {
         closeSearch()
     }
 
     LaunchedEffect(viewModel) {
-        viewModel.postCoinsMarketsPage(1)
-
-        launch {
-            viewModel.coinState.collect { resource ->
-                when (resource) {
-                    CoinResource.Loading -> {
-                        isLoading = true
-                        isContentVisible = false
-                    }
-
-                    is CoinResource.Success -> {
-                        isLoading = false
-                        coins.replaceAll(resource.data.orEmpty())
-                        isContentVisible = true
-                    }
-
-                    is CoinResource.Error -> {
-                        isLoading = false
-                        snackbarHostState.showSnackbar(someErrorMessage)
-                    }
-                }
-            }
-        }
-
-        launch {
-            viewModel.searchCoinState.collect { result ->
-                coins.replaceAll(result)
+        viewModel.events.collect { event ->
+            when (event) {
+                HomeUiEvent.CoinsLoadFailed -> snackbarHostState.showSnackbar(someErrorMessage)
             }
         }
     }
 
     HomeScreen(
-        coins = coins,
-        isSearchVisible = isSearchVisible,
-        searchText = searchText,
-        isContentVisible = isContentVisible,
-        onSearchClick = { isSearchVisible = true },
-        onSearchChange = ::onSearchChanged,
+        coins = uiState.coins,
+        isSearchVisible = uiState.isSearchVisible,
+        searchText = uiState.searchText,
+        isContentVisible = uiState.isContentVisible,
+        onSearchClick = viewModel::onSearchClick,
+        onSearchChange = viewModel::onSearchChange,
         onCloseSearchClick = ::closeSearch,
         onCoinClick = onCoinClick,
         modifier = modifier
     )
-    LoadingDialog(isVisible = isLoading)
-}
-
-private fun <T> MutableList<T>.replaceAll(items: List<T>) {
-    clear()
-    addAll(items)
+    LoadingDialog(isVisible = uiState.isLoading)
 }
 
 @Composable

@@ -17,9 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -29,13 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinImage
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinItem
 import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
-import coil3.compose.AsyncImage
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun MyCoinRoute(
@@ -43,14 +42,7 @@ fun MyCoinRoute(
     modifier: Modifier = Modifier,
     viewModel: MyCoinViewModel = hiltViewModel()
 ) {
-    val myCoins = remember { mutableStateListOf<CoinDetailItem>() }
-
-    LaunchedEffect(viewModel) {
-        viewModel.coinState.collect { resource ->
-            myCoins.clear()
-            myCoins.addAll(resource)
-        }
-    }
+    val myCoins by viewModel.coinState.collectAsStateWithLifecycle()
 
     MyCoinScreen(
         coins = myCoins,

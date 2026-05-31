@@ -11,8 +11,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -21,7 +25,13 @@ class HomeViewModel @Inject constructor(private val coinRepository: CoinReposito
     private val coinListPage = MutableSharedFlow<Int>(replay = 1)
     private val searchKeyCoin = MutableStateFlow("")
 
-    val coinState: StateFlow<CoinResource<List<CoinItem>>> = coinListPage
+    private val _uiState = MutableStateFlow(HomeUiState())
+    val uiState = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<HomeUiEvent>(extraBufferCapacity = 1)
+    val events = _events.asSharedFlow()
+
+    private val coinState: StateFlow<CoinResource<List<CoinItem>>> = coinListPage
         .flatMapLatest { page -> coinRepository.loadCoins(page) }
         .stateIn(
             scope = viewModelScope,
@@ -29,7 +39,7 @@ class HomeViewModel @Inject constructor(private val coinRepository: CoinReposito
             initialValue = CoinResource.Loading
         )
 
-    val searchCoinState: StateFlow<List<CoinItem>> = searchKeyCoin
+    private val searchCoinState: StateFlow<List<CoinItem>> = searchKeyCoin
         .flatMapLatest { searchKey ->
             if (searchKey.isEmpty()) {
                 coinRepository.getCoinList()
@@ -43,11 +53,73 @@ class HomeViewModel @Inject constructor(private val coinRepository: CoinReposito
             initialValue = emptyList()
         )
 
-    fun postCoinsMarketsPage(page: Int) {
+    init {
+        loadCoins()
+        observeCoins()
+        observeSearchCoins()
+    }
+
+    fun loadCoins(page: Int = 1) {
         coinListPage.tryEmit(page)
     }
 
-    fun postSearchCoinsMarketsPage(searchKey: String) {
-        searchKeyCoin.value = searchKey
+    fun onSearchClick() {
+        _uiState.update { state -> state.copy(isSearchVisible = true) }
+    }
+
+    fun onSearchChange(value: String) {
+        val searchText = value.trim()
+        _uiState.update { state -> state.copy(searchText = searchText) }
+        searchKeyCoin.value = searchText
+    }
+
+    fun onCloseSearchClick() {
+        _uiState.update { state ->
+            state.copy(
+                isSearchVisible = false,
+                searchText = ""
+            )
+        }
+        searchKeyCoin.value = ""
+    }
+
+    private fun observeCoins() {
+        viewModelScope.launch {
+            coinState.collect { resource ->
+                when (resource) {
+                    CoinResource.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                isLoading = true,
+                                isContentVisible = false
+                            )
+                        }
+                    }
+
+                    is CoinResource.Success -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                coins = resource.data.orEmpty(),
+                                isLoading = false,
+                                isContentVisible = true
+                            )
+                        }
+                    }
+
+                    is CoinResource.Error -> {
+                        _uiState.update { state -> state.copy(isLoading = false) }
+                        _events.emit(HomeUiEvent.CoinsLoadFailed)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeSearchCoins() {
+        viewModelScope.launch {
+            searchCoinState.collect { coins ->
+                _uiState.update { state -> state.copy(coins = coins) }
+            }
+        }
     }
 }

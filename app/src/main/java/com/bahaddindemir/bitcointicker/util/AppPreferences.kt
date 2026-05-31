@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import javax.inject.Inject
 
-class AppPreferences @Inject constructor(private val context: Context) {
+class AppPreferences @Inject constructor(private val context: Context) : PreferencesStore {
     companion object {
         private const val APP_PREFERENCES_NAME = "APP-NAME-Cache"
         private const val SESSION_PREFERENCES_NAME = "APP-NAME-UserCache"
@@ -27,7 +27,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
         editor.apply()
     }
 
-    var isLoggedIn: Boolean
+    override var isLoggedIn: Boolean
         get() {
             return sessionPreferences.getBoolean(LOGGED_IN.first, LOGGED_IN.second)
         }
@@ -35,7 +35,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
             it.putBoolean(LOGGED_IN.first, value)
         }
 
-    var isFirstTime: Boolean
+    override var isFirstTime: Boolean
         get() {
             return appPreferences.getBoolean(FIRST_TIME.first, FIRST_TIME.second)
         }
@@ -43,7 +43,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
             it.putBoolean(FIRST_TIME.first, value)
         }
 
-    var defaultLanguage: String?
+    override var defaultLanguage: String?
         get() {
             return appPreferences.getString(DEFAULT_LANGUAGE.first, DEFAULT_LANGUAGE.second)
         }
@@ -51,7 +51,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
             it.putString(DEFAULT_LANGUAGE.first, value)
         }
 
-    var defaultCurrency: String?
+    override var defaultCurrency: String?
         get() {
             return appPreferences.getString(DEFAULT_CURRENCY.first, DEFAULT_CURRENCY.second)
         }
@@ -59,7 +59,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
             it.putString(DEFAULT_CURRENCY.first, value)
         }
 
-    fun clearPreferences() {
+    override fun clearPreferences() {
         sessionPreferences.edit {
             it.clear().apply()
         }

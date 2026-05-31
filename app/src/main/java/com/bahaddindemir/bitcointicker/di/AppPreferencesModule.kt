@@ -2,6 +2,7 @@ package com.bahaddindemir.bitcointicker.di
 
 import android.content.Context
 import com.bahaddindemir.bitcointicker.util.AppPreferences
+import com.bahaddindemir.bitcointicker.util.PreferencesStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +16,5 @@ object AppPreferencesModule {
 
     @Provides
     @Singleton
-    fun providePreferences(@ApplicationContext context: Context) = AppPreferences(context)
+    fun providePreferences(@ApplicationContext context: Context): PreferencesStore = AppPreferences(context)
 }

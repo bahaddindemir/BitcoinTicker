@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinDetailItem
 import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepository
-import com.bahaddindemir.bitcointicker.util.AppPreferences
+import com.bahaddindemir.bitcointicker.util.PreferencesStore
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val coinRepository: CoinRepository,
-    private val appPreferences: AppPreferences
+    private val appPreferences: PreferencesStore
 ) : ViewModel() {
     private val coinItem = MutableSharedFlow<String>(replay = 1)
     private var refreshJob: Job? = null

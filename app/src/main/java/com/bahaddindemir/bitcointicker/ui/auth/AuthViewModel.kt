@@ -7,8 +7,8 @@ import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
 import com.bahaddindemir.bitcointicker.data.model.AuthRequest
 import com.bahaddindemir.bitcointicker.data.model.LoginValidationException
 import com.bahaddindemir.bitcointicker.data.repository.auth.AuthRepository
-import com.bahaddindemir.bitcointicker.util.AppPreferences
 import com.bahaddindemir.bitcointicker.util.AuthUseCase
+import com.bahaddindemir.bitcointicker.util.PreferencesStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val authRepository: AuthRepository,
-    private val appPreferences: AppPreferences
+    private val appPreferences: PreferencesStore
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState = _uiState.asStateFlow()

@@ -10,7 +10,7 @@ import com.bahaddindemir.bitcointicker.data.repository.coin.CoinRepositoryImp
 import com.bahaddindemir.bitcointicker.data.services.ApiService
 import com.bahaddindemir.bitcointicker.data.services.AuthRemoteDataSource
 import com.bahaddindemir.bitcointicker.data.services.FireStoreSource
-import com.bahaddindemir.bitcointicker.util.AppPreferences
+import com.bahaddindemir.bitcointicker.util.PreferencesStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,12 +29,12 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideAccountRepository(remoteDataSource: AuthRemoteDataSource,
-                                 appPreferences: AppPreferences):
+                                 appPreferences: PreferencesStore):
             AccountRepository = AccountRepositoryImpl(remoteDataSource, appPreferences)
 
     @Provides
     @Singleton
     fun provideCoinRepository(coinDao: CoinDao, fireStore: FireStoreSource,
-                              apiService: ApiService, appPreferences: AppPreferences):
+                              apiService: ApiService, appPreferences: PreferencesStore):
             CoinRepository = CoinRepositoryImp(coinDao, fireStore, apiService, appPreferences)
 }

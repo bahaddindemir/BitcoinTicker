@@ -1,12 +1,12 @@
 package com.bahaddindemir.bitcointicker.data.repository.account
 
 import com.bahaddindemir.bitcointicker.data.services.AuthRemoteDataSource
-import com.bahaddindemir.bitcointicker.util.AppPreferences
+import com.bahaddindemir.bitcointicker.util.PreferencesStore
 import javax.inject.Inject
 
 class AccountRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
-    private val appPreferences: AppPreferences) : AccountRepository {
+    private val appPreferences: PreferencesStore) : AccountRepository {
 
     override
     fun logOut() = authRemoteDataSource.logout()

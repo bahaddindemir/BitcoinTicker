@@ -8,7 +8,7 @@ import com.bahaddindemir.bitcointicker.data.model.coin.CoinResource
 import com.bahaddindemir.bitcointicker.data.repository.network.NetworkBoundRepository
 import com.bahaddindemir.bitcointicker.data.services.ApiService
 import com.bahaddindemir.bitcointicker.data.services.FireStoreSource
-import com.bahaddindemir.bitcointicker.util.AppPreferences
+import com.bahaddindemir.bitcointicker.util.PreferencesStore
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 class CoinRepositoryImp @Inject constructor(private val coinDao: CoinDao,
                                             private val fireStore: FireStoreSource,
                                             private val apiService: ApiService,
-                                            private val appPreferences: AppPreferences) : CoinRepository
+                                            private val appPreferences: PreferencesStore) : CoinRepository
 {
     override fun loadCoinDetail(coinItemId: String): Flow<CoinResource<CoinDetailItem>> =
             object : NetworkBoundRepository<CoinDetailItem, CoinDetailItem>() {

@@ -13,9 +13,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -25,19 +23,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bahaddindemir.bitcointicker.R
 import com.bahaddindemir.bitcointicker.data.model.AuthFieldsValidation
 import com.bahaddindemir.bitcointicker.extension.openActivityAndClearStack
 import com.bahaddindemir.bitcointicker.ui.components.LoadingDialog
 import com.bahaddindemir.bitcointicker.ui.main.MainActivity
 import com.bahaddindemir.bitcointicker.ui.splash.SplashScreen
+import com.bahaddindemir.bitcointicker.ui.splash.SplashUiEvent
 import com.bahaddindemir.bitcointicker.ui.splash.SplashViewModel
 import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerColors
 import com.bahaddindemir.bitcointicker.ui.theme.BitcoinTickerTheme
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity() {
@@ -139,16 +137,17 @@ private fun SplashRoute(
     openLogin: () -> Unit,
     openHome: () -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        delay(SPLASH_DELAY_MILLIS)
-        if (viewModel.isFirstTime()) {
-            viewModel.setFirstTime()
-            openLogin()
-        } else if (viewModel.isLoggedIn()) {
-            openHome()
-        } else {
-            openLogin()
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                SplashUiEvent.OpenLogin -> openLogin()
+                SplashUiEvent.OpenHome -> openHome()
+            }
         }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.start()
     }
 
     SplashScreen()
@@ -162,7 +161,7 @@ private fun AuthRouteContent(
     openHome: () -> Unit,
     openSignup: () -> Unit
 ) {
-    var isLoading by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val someErrorMessage = stringResource(id = R.string.some_error)
     val emptyEmailMessage = stringResource(id = R.string.empty_email)
@@ -170,64 +169,55 @@ private fun AuthRouteContent(
     val emptyPasswordMessage = stringResource(id = R.string.empty_password)
 
     LaunchedEffect(viewModel, route) {
-        launch {
-            viewModel.successResponse.collect { isSuccess ->
-                if (isSuccess) {
-                    openHome()
-                } else {
-                    snackbarHostState.showSnackbar(someErrorMessage)
-                }
-            }
-        }
-
-        launch {
-            viewModel.validationException.collect { validationType ->
-                val message = when (validationType) {
-                    AuthFieldsValidation.EMPTY_EMAIL.value -> emptyEmailMessage
-                    AuthFieldsValidation.INVALID_EMAIL.value -> invalidEmailMessage
-                    AuthFieldsValidation.EMPTY_PASSWORD.value -> emptyPasswordMessage
-                    else -> someErrorMessage
-                }
-                snackbarHostState.showSnackbar(message)
-            }
-        }
-
-        launch {
-            viewModel.isLoading.collect { loading ->
-                isLoading = loading
-                if (loading) {
-                    keyboardController?.hide()
+        viewModel.events.collect { event ->
+            when (event) {
+                AuthUiEvent.AuthSucceeded -> openHome()
+                AuthUiEvent.AuthFailed -> snackbarHostState.showSnackbar(someErrorMessage)
+                is AuthUiEvent.ValidationFailed -> {
+                    val message = when (event.validationType) {
+                        AuthFieldsValidation.EMPTY_EMAIL.value -> emptyEmailMessage
+                        AuthFieldsValidation.INVALID_EMAIL.value -> invalidEmailMessage
+                        AuthFieldsValidation.EMPTY_PASSWORD.value -> emptyPasswordMessage
+                        else -> someErrorMessage
+                    }
+                    snackbarHostState.showSnackbar(message)
                 }
             }
         }
     }
 
+    LaunchedEffect(uiState.isLoading) {
+        if (uiState.isLoading) {
+            keyboardController?.hide()
+        }
+    }
+
     when (route) {
         AuthRoute.Login -> LoginScreen(
-            initialEmail = viewModel.request.email,
-            initialPassword = viewModel.request.password,
+            initialEmail = uiState.email,
+            initialPassword = uiState.password,
             focusTarget = null,
             onFocusHandled = {},
-            onEmailChange = { viewModel.request.email = it },
-            onPasswordChange = { viewModel.request.password = it },
+            onEmailChange = viewModel::onEmailChange,
+            onPasswordChange = viewModel::onPasswordChange,
             onLoginClick = { viewModel.onLoginClicked() },
             onSignupClick = openSignup
         )
 
         AuthRoute.Signup -> SignupScreen(
-            initialEmail = viewModel.request.email,
-            initialPassword = viewModel.request.password,
+            initialEmail = uiState.email,
+            initialPassword = uiState.password,
             focusTarget = null,
             onFocusHandled = {},
-            onEmailChange = { viewModel.request.email = it },
-            onPasswordChange = { viewModel.request.password = it },
+            onEmailChange = viewModel::onEmailChange,
+            onPasswordChange = viewModel::onPasswordChange,
             onSignupClick = { viewModel.onSignupClicked() }
         )
 
         AuthRoute.Splash -> Unit
     }
 
-    LoadingDialog(isVisible = isLoading)
+    LoadingDialog(isVisible = uiState.isLoading)
 }
 
 @Preview(showBackground = true)
@@ -241,5 +231,3 @@ private enum class AuthRoute(val route: String) {
     Login("login"),
     Signup("signup")
 }
-
-private const val SPLASH_DELAY_MILLIS = 2000L

@@ -59,8 +59,6 @@ class DetailViewModel @Inject constructor(
     }
 
     fun startRefreshing(coinItemId: String) {
-        if (_uiState.value.coinId == coinItemId && refreshJob?.isActive == true) return
-
         refreshJob?.cancel()
         _uiState.update { state ->
             state.copy(

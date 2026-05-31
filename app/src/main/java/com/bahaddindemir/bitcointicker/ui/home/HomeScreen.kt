@@ -60,7 +60,7 @@ fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val someErrorMessage = stringResource(id = R.string.some_error)
+    val coinsLoadErrorMessage = stringResource(id = R.string.coins_load_error)
 
     fun closeSearch() {
         keyboardController?.hide()
@@ -74,7 +74,7 @@ fun HomeRoute(
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
-                HomeUiEvent.CoinsLoadFailed -> snackbarHostState.showSnackbar(someErrorMessage)
+                HomeUiEvent.CoinsLoadFailed -> snackbarHostState.showSnackbar(coinsLoadErrorMessage)
             }
         }
     }

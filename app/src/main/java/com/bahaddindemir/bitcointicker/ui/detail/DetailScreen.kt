@@ -59,7 +59,8 @@ fun DetailRoute(
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val someErrorMessage = stringResource(id = R.string.some_error)
+    val detailLoadErrorMessage = stringResource(id = R.string.detail_load_error)
+    val favoriteChangeErrorMessage = stringResource(id = R.string.favorite_change_error)
 
     LaunchedEffect(coinId) {
         viewModel.startRefreshing(coinId)
@@ -68,8 +69,8 @@ fun DetailRoute(
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
-                DetailUiEvent.DetailLoadFailed,
-                DetailUiEvent.FavoriteChangeFailed -> snackbarHostState.showSnackbar(someErrorMessage)
+                DetailUiEvent.DetailLoadFailed -> snackbarHostState.showSnackbar(detailLoadErrorMessage)
+                DetailUiEvent.FavoriteChangeFailed -> snackbarHostState.showSnackbar(favoriteChangeErrorMessage)
             }
         }
     }

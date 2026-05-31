@@ -164,6 +164,7 @@ private fun AuthRouteContent(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val someErrorMessage = stringResource(id = R.string.some_error)
+    val authFailedMessage = stringResource(id = R.string.auth_failed)
     val emptyEmailMessage = stringResource(id = R.string.empty_email)
     val invalidEmailMessage = stringResource(id = R.string.invalid_email)
     val emptyPasswordMessage = stringResource(id = R.string.empty_password)
@@ -172,7 +173,7 @@ private fun AuthRouteContent(
         viewModel.events.collect { event ->
             when (event) {
                 AuthUiEvent.AuthSucceeded -> openHome()
-                AuthUiEvent.AuthFailed -> snackbarHostState.showSnackbar(someErrorMessage)
+                AuthUiEvent.AuthFailed -> snackbarHostState.showSnackbar(authFailedMessage)
                 is AuthUiEvent.ValidationFailed -> {
                     val message = when (event.validationType) {
                         AuthFieldsValidation.EMPTY_EMAIL.value -> emptyEmailMessage

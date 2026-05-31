@@ -12,6 +12,10 @@
     <string name="retry">Retry</string>
     <string name="cancel">Cancel</string>
     <string name="some_error">Some error occurred, try again later</string>
+    <string name="auth_failed">Authentication failed, please try again</string>
+    <string name="coins_load_error">Coins could not be loaded, please try again</string>
+    <string name="detail_load_error">Coin details could not be loaded, please try again</string>
+    <string name="favorite_change_error">Favorite status could not be updated, please try again</string>
     <string name="list_no_result">Sorry, There are no results here!</string>
     <string name="hashtag">#</string>
     <string name="title">Title</string>
